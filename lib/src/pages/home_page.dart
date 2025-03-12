@@ -1,354 +1,127 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 393,
-          height: 852,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(color: Color(0xFFE0FEEA)),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 0,
-                top: 0,
-                child: Container(
-                  width: 393,
-                  height: 217,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF0E4932),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 2,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                      ),
-                    ),
-                  ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFE0FEEA),
+      body: Column(
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Metas Diárias',
+                style: TextStyle(
+                  color: Color(0xFF0E4932),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              Positioned(
-                left: -1,
-                top: 780,
-                child: Container(
-                  width: 394,
-                  height: 72,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF0E4932),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 2,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          _buildGoalCard('Reciclagem', 'Separar lixo reciclável e orgânico\npara coleta apropriada'),
+          _buildGoalCard('Zero combustível', 'Realizar um percurso a pé, de\nbicicleta ou transporte público'),
+          _buildGoalCard('Nova Meta','Crie uma nova meta'), 
+          const Spacer(),
+          _buildBottomNavigation(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      width: double.infinity,
+      height: 180,
+      color: const Color(0xFF0E4932),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const CircleAvatar(
+            radius: 40,
+            backgroundColor: Colors.white,
+            backgroundImage: NetworkImage("https://via.placeholder.com/100"),
+          ),
+          const SizedBox(width: 15),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'Giovana Muniz',
+                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              Positioned(
-                left: 20,
-                top: 789,
-                child: Container(
-                  width: 54,
-                  height: 54,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 2,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
+              Text(
+                'Pontos: 18.750',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
               ),
-              Positioned(
-                left: 19,
-                top: 59,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: ShapeDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage("https://placehold.co/100x100"),
-                      fit: BoxFit.fill,
-                    ),
-                    shape: OvalBorder(
-                      side: BorderSide(
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                      ),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 136,
-                top: 53,
-                child: Text(
-                  'Giovana Muniz',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 85,
-                top: 223,
-                child: Text(
-                  'Metas Diárias',
-                  style: TextStyle(
-                    color: Color(0xFF0E4932),
-                    fontSize: 32,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 19,
-                top: 271,
-                child: Container(
-                  width: 353,
-                  height: 75,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 319,
-                top: 271,
-                child: Container(
-                  width: 53,
-                  height: 75,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF0E4932),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 20,
-                top: 352,
-                child: Container(
-                  width: 353,
-                  height: 95,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 320,
-                top: 352,
-                child: Container(
-                  width: 53,
-                  height: 96,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF0E4932),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 19,
-                top: 454,
-                child: Container(
-                  width: 353,
-                  height: 33,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 319,
-                top: 454,
-                child: Container(
-                  width: 53,
-                  height: 33,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF0E4932),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 30,
-                top: 271,
-                child: Text(
-                  'Reciclagem',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 31,
-                top: 353,
-                child: Text(
-                  'Zero combustível',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 30,
-                top: 454,
-                child: Text(
-                  'Nova meta',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 31,
-                top: 300,
-                child: Text(
-                  'Separar lixo reciclável e orgânico \npara coleta apropriada',
-                  style: TextStyle(
-                    color: Color(0xFF232323),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    height: 1.25,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 31,
-                top: 383,
-                child: Text(
-                  'Realizar um percurso a pé, de\nbicicleta ou utilizando o transporte\npúblico',
-                  style: TextStyle(
-                    color: Color(0xFF232323),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    height: 1.25,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 181,
-                top: 101,
-                child: SizedBox(
-                  width: 150,
-                  child: Text(
-                    'Pontos:  18.750',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 135,
-                top: 138,
-                child: SizedBox(
-                  width: 242,
-                  height: 21,
-                  child: Text(
-                    '10 dias ajudando a salvar o mundo',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      height: 1,
-                    ),
-                  ),
-                ),
+              Text(
+                '10 dias ajudando a salvar o mundo',
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoalCard(String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black12, width: 1),
+          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 3)],
         ),
-      ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildBottomNavigation() {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFF0E4932),
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
+        iconSize: Checkbox.width,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.gamepad), label: ''),
+        ],
+      ),
     );
   }
 }

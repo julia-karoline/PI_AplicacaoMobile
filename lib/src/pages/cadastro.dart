@@ -120,9 +120,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         ),
       ),
     );
   }
-}        
+}
