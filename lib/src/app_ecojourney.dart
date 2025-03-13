@@ -1,5 +1,6 @@
 import 'package:app_ecojourney/src/pages/home_page.dart';
 import 'package:app_ecojourney/src/pages/info_page.dart';
+import 'package:app_ecojourney/src/pages/shopping.dart';
 import 'package:flutter/material.dart';
 
 
@@ -11,6 +12,6 @@ class AppEcojourney extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'AppEcojourney',
-        home: InfoScreen());
+        home: HomePage());
   }
 }
