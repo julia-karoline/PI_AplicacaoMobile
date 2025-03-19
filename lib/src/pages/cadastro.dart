@@ -1,3 +1,5 @@
+import 'package:app_ecojourney/src/pages/home_page.dart';
+import 'package:app_ecojourney/src/pages/login.dart';
 import 'package:flutter/material.dart';
 
 class CadastroScreen extends StatefulWidget {
@@ -15,10 +17,11 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: SizedBox.expand(
+        child: FractionallySizedBox(
+    widthFactor: 1.0, // Define a largura como 90% da tela
+    heightFactor: 1.0, // Define a altura como 80% da tela
           child: Container(
             padding: const EdgeInsets.all(20),
-            margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: const Color(0xFFEAF7E7),
               borderRadius: BorderRadius.circular(12),
@@ -26,6 +29,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                 mainAxisSize: MainAxisSize.min, // Ajusta o tamanho conforme o conteúdo
                 children: [
                   const Text(
                     'Criar uma conta',
@@ -33,7 +37,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: Color(0xFF0E4931),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -61,12 +65,15 @@ class _CadastroScreenState extends State<CadastroScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[900],
+                      backgroundColor: const Color(0xFF0E4931),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                      );},
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
@@ -77,7 +84,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
                   ),
                   const SizedBox(height: 12),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () { Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TelaLogin()),
+                      );},
                     child: const Text(
                       'Já tem uma conta? Entre',
                       style: TextStyle(
@@ -129,4 +139,3 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 }
-
