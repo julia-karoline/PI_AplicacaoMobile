@@ -23,7 +23,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF7E7),
+              color: const Color(0xFFE0FEEA),
               borderRadius: BorderRadius.circular(12),
             ),
             child: SingleChildScrollView(
@@ -35,13 +35,13 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     'Criar uma conta',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize:24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0E4931),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _buildTextField('Nome'),
+                  _buildTextField('Nome',),
                   _buildTextField('Email'),
                   _buildTextField('Senha', isPassword: true),
                   _buildTextField('Repetir senha', isPassword: true),
@@ -122,15 +122,28 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 
-  Widget _buildTextField(String label, {bool isPassword = false}) {
+ Widget _buildTextField(String label, {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         obscureText: isPassword,
+        style: const TextStyle(color: Colors.black), // Define a cor do texto como preto
         decoration: InputDecoration(
+          filled: true, // Garante que o campo esteja preenchido
+          fillColor: Colors.white, // Define o fundo branco
           hintText: label,
+          hintStyle: const TextStyle(color: Colors.grey), // Cor do placeholder
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: Colors.black), // Borda preta
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: Colors.black),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: Colors.green), // Borda verde ao focar
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
