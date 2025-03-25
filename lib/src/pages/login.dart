@@ -1,3 +1,5 @@
+import 'package:app_ecojourney/src/pages/cadastro.dart';
+import 'package:app_ecojourney/src/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class TelaLogin extends StatelessWidget {
@@ -59,7 +61,10 @@ class TelaLogin extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {}, // Add login function
+              onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                      );}, // Add login function
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0E4932),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -77,7 +82,10 @@ class TelaLogin extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: () {}, // Add register function
+              onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CadastroScreen()),
+                      );}, // Add register function
               child: const Text(
                 'Não tem uma conta? Cadastre-se',
                 textAlign: TextAlign.center,
