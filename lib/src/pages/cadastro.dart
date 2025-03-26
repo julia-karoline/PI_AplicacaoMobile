@@ -35,12 +35,13 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     'Criar uma conta',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize:24,
-                      fontWeight: FontWeight.bold,
+                      fontSize:40,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0E4931),
+                      fontFamily: 'Poppins',
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                   _buildTextField('Nome',),
                   _buildTextField('Email'),
                   _buildTextField('Senha', isPassword: true),
@@ -67,7 +68,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0E4931),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     onPressed: () {Navigator.push(
