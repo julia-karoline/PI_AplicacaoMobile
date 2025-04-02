@@ -155,15 +155,15 @@ class RewardsScreen extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
                   ),
-                  child: Text('Metas Diárias'),
+                  child: Text('Recompensas'),
                 ),
               ),
               Positioned(
                 left: 19,
-                top: 300,
+                top: 310,
                 child: Container(
                   width: 353,
-                  height: 33,
+                  height: 100,
                   decoration: ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -183,10 +183,10 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 319,
-                top: 300,
+                top: 310,
                 child: Container(
                   width: 53,
-                  height: 33,
+                  height: 100,
                   decoration: ShapeDecoration(
                     color: Color(0xFF0E4932),
                     shape: RoundedRectangleBorder(
@@ -202,24 +202,25 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 30,
-                top: 300,
+                top: 310,
                 child: DefaultTextStyle(
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
+                     height: 1.25,
                   ),
-                  child: Text('Nova meta'),
+                  child: Text('Cosméticos\n10% off na compra de produtos\nde beleza \n por 20.000 pontos '),
                 ),
               ),
               Positioned(
                 left: 19,
-                top: 400,
+                top: 420,
                 child: Container(
                   width: 353,
-                  height: 33,
+                  height: 110,
                   decoration: ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -239,10 +240,10 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 319,
-                top: 400,
+                top: 420,
                 child: Container(
                   width: 53,
-                  height: 33,
+                  height: 110,
                   decoration: ShapeDecoration(
                     color: Color(0xFF0E4932),
                     shape: RoundedRectangleBorder(
@@ -258,24 +259,25 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 30,
-                top: 400,
+                top: 420,
                 child: DefaultTextStyle(
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
+                    
                   ),
-                  child: Text('Nova meta'),
+                  child: Text('Esportes\nRS10,00 off na compra de itens \n  esportivos\n por: 15.000 pontos '),
                 ),
               ),
               Positioned(
                 left: 19,
-                top: 500,
+                top: 550,
                 child: Container(
                   width: 353,
-                  height: 33,
+                  height: 100,
                   decoration: ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -295,10 +297,10 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 319,
-                top: 500,
+                top: 550,
                 child: Container(
                   width: 53,
-                  height: 33,
+                  height: 100,
                   decoration: ShapeDecoration(
                     color: Color(0xFF0E4932),
                     shape: RoundedRectangleBorder(
@@ -314,16 +316,17 @@ class RewardsScreen extends StatelessWidget {
               ),
               Positioned(
                 left: 30,
-                top: 500,
+                top: 550,
                 child: DefaultTextStyle(
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
+                    
                   ),
-                  child: Text('Nova meta'),
+                  child: Text('Moda &  Acessórios\n 15% off na compra de produtos  \n  de beleza \n por: 35.000 pontos '),
                 ),
               ),
               Positioned(
@@ -334,7 +337,7 @@ class RewardsScreen extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 20,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w600, 
                   ),
                   child: SizedBox(
                     width: 150,
@@ -359,7 +362,7 @@ class RewardsScreen extends StatelessWidget {
                     width: 242,
                     height: 21,
                     child: Text(
-                      '10 dias ajudando a salvar o mundo',
+                      '',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -371,4 +374,6 @@ class RewardsScreen extends StatelessWidget {
       ],
     );
   }
+  
+
 }
