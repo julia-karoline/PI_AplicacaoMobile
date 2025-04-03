@@ -10,7 +10,52 @@ class CadastroScreen extends StatefulWidget {
 }
 
 class _CadastroScreenState extends State<CadastroScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController =
+      TextEditingController();
   bool agreeToTerms = false;
+
+  String? _validateNome(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo nome é obrigatório';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo e-mail é obrigatório';
+    }
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Digite um e-mail válido';
+    }
+    return null;
+  }
+
+  String? _validateSenha(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo senha é obrigatório';
+    }
+    if (value.length < 6) {
+      return 'A senha deve ter pelo menos 6 caracteres';
+    }
+    return null;
+  }
+
+  String? _validateConfirmarSenha(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Confirme sua senha';
+    }
+    if (value != _senhaController.text) {
+      return 'As senhas não coincidem';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +63,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
       backgroundColor: Colors.black,
       body: Center(
         child: FractionallySizedBox(
-    widthFactor: 1.0, // Define a largura como 90% da tela
-    heightFactor: 1.0, // Define a altura como 80% da tela
+          widthFactor: 1.0,
+          heightFactor: 1.0,
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -27,94 +72,89 @@ class _CadastroScreenState extends State<CadastroScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                 mainAxisSize: MainAxisSize.min, // Ajusta o tamanho conforme o conteúdo
-                children: [
-                  const Text(
-                    'Criar uma conta',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize:40,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0E4931),
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  _buildTextField('Nome',),
-                  _buildTextField('Email'),
-                  _buildTextField('Senha', isPassword: true),
-                  _buildTextField('Repetir senha', isPassword: true),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: agreeToTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            agreeToTerms = value!;
-                          });
-                        },
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Criar uma conta',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0E4931),
+                        fontFamily: 'Poppins',
                       ),
-                      const Expanded(
-                        child: Text(
-                          'Eu concordo com os termos de uso',
-                          style: TextStyle(fontSize: 12),
+                    ),
+                    const SizedBox(height: 40),
+                    _buildTextField('Nome', _nomeController, _validateNome),
+                    _buildTextField('Email', _emailController, _validateEmail),
+                    _buildTextField('Senha', _senhaController, _validateSenha,
+                        isPassword: true),
+                    _buildTextField('Repetir senha', _confirmarSenhaController,
+                        _validateConfirmarSenha,
+                        isPassword: true),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: agreeToTerms,
+                          onChanged: (value) {
+                            setState(() {
+                              agreeToTerms = value!;
+                            });
+                          },
+                        ),
+                        const Expanded(
+                          child: Text(
+                            'Eu concordo com os termos de uso',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0E4931),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0E4931),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'Criar conta',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
                     ),
-                    onPressed: () {Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                      );},
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        'Criar conta',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TelaLogin()),
+                        );
+                      },
+                      child: const Text(
+                        'Já tem uma conta? Entre',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () { Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TelaLogin()),
-                      );},
-                    child: const Text(
-                      'Já tem uma conta? Entre',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'ou continue com',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.g_mobiledata, size: 32),
-                      SizedBox(width: 16),
-                      Icon(Icons.facebook, size: 32),
-                      SizedBox(width: 16),
-                      Icon(Icons.camera_alt, size: 32),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -123,20 +163,23 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 
- Widget _buildTextField(String label, {bool isPassword = false}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      String? Function(String?) validator,
+      {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
         obscureText: isPassword,
-        style: const TextStyle(color: Colors.black), // Define a cor do texto como preto
+        style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
-          filled: true, // Garante que o campo esteja preenchido
-          fillColor: Colors.white, // Define o fundo branco
+          filled: true,
+          fillColor: Colors.white,
           hintText: label,
-          hintStyle: const TextStyle(color: Colors.grey), // Cor do placeholder
+          hintStyle: const TextStyle(color: Colors.grey),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: Colors.black), // Borda preta
+            borderSide: const BorderSide(color: Colors.black),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
@@ -144,11 +187,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: Colors.green), // Borda verde ao focar
+            borderSide: const BorderSide(color: Colors.green),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         ),
+        validator: validator,
       ),
     );
   }
