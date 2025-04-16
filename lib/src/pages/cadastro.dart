@@ -1,4 +1,4 @@
-import 'package:app_ecojourney/src/pages/home_page.dart';
+import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
 import 'package:app_ecojourney/src/pages/login.dart';
 import 'package:flutter/material.dart';
 
@@ -125,7 +125,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
                         if (_formKey.currentState!.validate()) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                           MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+
                           );
                         }
                       },

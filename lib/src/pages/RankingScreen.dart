@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RankingScreen(),
-    );
-  }
-}
-
 class RankingScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> ranking = [
+  const RankingScreen({super.key});
+
+  final List<Map<String, dynamic>> ranking = const [
     {'name': 'Daniela', 'days': 25, 'points': 30000},
     {'name': 'Carlos Henri...', 'days': 30, 'points': 27500},
     {'name': 'Giovana Muniz', 'days': 10, 'points': 18750},
@@ -26,12 +14,25 @@ class RankingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFDFF5E3),
+      backgroundColor: const Color(0xFFDFF5E3),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1, 
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/shopping');
+              break;
+          }
+        },
         backgroundColor: Colors.green.shade900,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: ''),
@@ -40,19 +41,19 @@ class RankingScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             color: Colors.green.shade900,
             child: Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
                   child: Icon(Icons.eco, color: Colors.green, size: 40),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     Text(
                       'Giovana Muniz',
                       style: TextStyle(
@@ -67,21 +68,25 @@ class RankingScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 Column(
-                  children: [
+                  children: const [
                     Icon(Icons.emoji_events, color: Colors.white, size: 24),
                     Text(
                       '20º',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -99,7 +104,7 @@ class RankingScreen extends StatelessWidget {
               itemCount: ranking.length,
               itemBuilder: (context, index) {
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -116,7 +121,7 @@ class RankingScreen extends StatelessWidget {
                     subtitle: Text('${ranking[index]['days']} dias'),
                     trailing: Text(
                       '${ranking[index]['points']}',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 );

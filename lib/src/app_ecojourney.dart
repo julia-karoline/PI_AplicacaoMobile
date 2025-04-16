@@ -1,7 +1,9 @@
-import 'package:app_ecojourney/src/pages/home_page.dart';
-import 'package:app_ecojourney/src/pages/info_page.dart';
+import 'package:app_ecojourney/src/pages/RankingScreen.dart';
 import 'package:app_ecojourney/src/pages/shopping.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ecojourney/src/pages/cadastro.dart';
+import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
+
 
 
 class AppEcojourney extends StatelessWidget {
@@ -10,8 +12,15 @@ class AppEcojourney extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'AppEcojourney',
-        home: HomePage());
+      debugShowCheckedModeBanner: false,
+      title: 'AppEcojourney',
+      initialRoute: '/cadastro',
+      routes: {
+        '/cadastro': (context) => const CadastroScreen(),
+        '/home': (context) => const DailyGoalsScreen(),
+        '/ranking': (context) => const RankingScreen(),
+        '/shopping': (context) => const RewardsScreen(),
+      },
+    );
   }
 }

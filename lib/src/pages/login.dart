@@ -1,5 +1,6 @@
 import 'package:app_ecojourney/src/pages/cadastro.dart';
-import 'package:app_ecojourney/src/pages/home_page.dart';
+import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
+
 import 'package:flutter/material.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -12,14 +13,13 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+final TextEditingController _passwordController = TextEditingController();
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'O campo e-mail é obrigatório';
     }
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\$');
+    final emailRegex = RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
     if (!emailRegex.hasMatch(value)) {
       return 'Digite um e-mail válido';
     }
@@ -29,7 +29,7 @@ class _TelaLoginState extends State<TelaLogin> {
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'O campo senha é obrigatório';
-    }
+}
     if (value.length < 6) {
       return 'A senha deve ter pelo menos 6 caracteres';
     }
@@ -104,7 +104,8 @@ class _TelaLoginState extends State<TelaLogin> {
                   if (_formKey.currentState!.validate()) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+
                     );
                   }
                 },
