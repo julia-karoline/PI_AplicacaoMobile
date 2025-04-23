@@ -30,6 +30,10 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.shopping_cart),
           label: "Shopping",
         ),
+         BottomNavigationBarItem(
+          icon: Icon(Icons.task),
+          label: "Hábitos",
+        ),
       ],
     );
   }

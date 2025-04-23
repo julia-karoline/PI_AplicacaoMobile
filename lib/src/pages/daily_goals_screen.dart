@@ -209,6 +209,9 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     case 2:
       Navigator.pushReplacementNamed(context, '/shopping');
       break;
+    case 3:
+      Navigator.pushReplacementNamed(context, '/habitos');
+      break;
   }
 }
 

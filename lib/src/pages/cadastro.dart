@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/login.dart';
-import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
 import 'package:app_ecojourney/src/services/api_service.dart';
 
 class CadastroScreen extends StatefulWidget {

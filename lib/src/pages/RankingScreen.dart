@@ -27,6 +27,9 @@ class _RankingScreenState extends State<RankingScreen> {
       case 2:
         Navigator.pushReplacementNamed(context, '/shopping');
         break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/habitos');
+        break;
     }
   }
 
