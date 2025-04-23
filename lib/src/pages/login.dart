@@ -1,46 +1,72 @@
+import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/cadastro.dart';
 import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
-
-import 'package:flutter/material.dart';
+import 'package:app_ecojourney/src/services/api_service.dart';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({super.key});
 
   @override
-  State<TelaLogin> createState() => _TelaLoginState();
+  State<TelaLogin> createState() => TelaLoginState();
 }
 
-class _TelaLoginState extends State<TelaLogin> {
+class TelaLoginState extends State<TelaLogin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  String? _validateEmail(String? value) {
+  String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'O campo e-mail é obrigatório';
     }
-    final emailRegex = RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
     if (!emailRegex.hasMatch(value)) {
       return 'Digite um e-mail válido';
     }
     return null;
   }
 
-  String? _validatePassword(String? value) {
+  String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'O campo senha é obrigatório';
-}
+    }
     if (value.length < 6) {
       return 'A senha deve ter pelo menos 6 caracteres';
     }
     return null;
   }
 
+  Future<void> login() async {
+    if (_formKey.currentState!.validate()) {
+      final result = await ApiService.loginUser(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'])),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['error'] ?? 'Erro ao fazer login')),
+        );
+      }
+    }
+  }
+
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE0FEEA),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Form(
           key: _formKey,
@@ -48,6 +74,7 @@ final TextEditingController _passwordController = TextEditingController();
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 60),
               const Text(
                 'Entrar',
                 textAlign: TextAlign.center,
@@ -60,18 +87,21 @@ final TextEditingController _passwordController = TextEditingController();
               ),
               const SizedBox(height: 40),
               TextFormField(
+                key: const Key('email_field'),
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-                validator: _validateEmail,
+                validator: validateEmail,
               ),
               const SizedBox(height: 20),
               TextFormField(
+                key: const Key('password_field'),
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -79,14 +109,17 @@ final TextEditingController _passwordController = TextEditingController();
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-                validator: _validatePassword,
+                validator: validatePassword,
               ),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {}, // Add forgot password function
+                  onPressed: () {
+                    
+                  },
                   child: const Text(
                     'Esqueci minha senha',
                     style: TextStyle(
@@ -100,19 +133,20 @@ final TextEditingController _passwordController = TextEditingController();
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                key: const Key('login_button'), // Corrigido aqui
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
-
+                      MaterialPageRoute(builder: (context) => DailyGoalsScreen()),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0E4932),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text(
@@ -132,7 +166,7 @@ final TextEditingController _passwordController = TextEditingController();
                     context,
                     MaterialPageRoute(builder: (context) => CadastroScreen()),
                   );
-                }, // Add register function
+                },
                 child: const Text(
                   'Não tem uma conta? Cadastre-se',
                   textAlign: TextAlign.center,

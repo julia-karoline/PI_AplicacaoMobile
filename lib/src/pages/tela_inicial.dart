@@ -5,50 +5,62 @@ class TelaInicial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
           _buildBackground(),
-          _buildContent(context),
+          _buildContent(context, size),
         ],
       ),
     );
   }
 
-  /// Background Image
   Widget _buildBackground() {
     return Positioned.fill(
       child: Image.asset(
-        "lib/src/assets/images/tela-fundo.png",
+        "assets/images/tela-fundo.png",
         fit: BoxFit.cover,
       ),
     );
   }
 
-  /// Main Content of the Screen
-  Widget _buildContent(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildTitle(),
-        const Spacer(),
-        _buildLoginButton(context),
-        _buildLoginText(),
-        const SizedBox(height: 40),
-      ],
+  Widget _buildContent(BuildContext context, Size size) {
+    final isSmallDevice = size.height < 600;
+    final double maxContentWidth = 500; 
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxContentWidth),
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: isSmallDevice ? 40 : size.height * 0.1),
+              _buildTitle(size),
+              const SizedBox(height: 40),
+              _buildLoginButton(context, size),
+              _buildLoginText(context, size),
+              SizedBox(height: size.height * 0.05),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  /// App Title
-  Widget _buildTitle() {
+  Widget _buildTitle(Size size) {
+    final double fontSize = size.width > 500 ? 50 : size.width * 0.12;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 80),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
         child: Text(
           'EcoJourney',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 48,
+            fontSize: fontSize,
             fontWeight: FontWeight.w900,
             shadows: [
               Shadow(
@@ -63,59 +75,68 @@ class TelaInicial extends StatelessWidget {
     );
   }
 
-  /// Login Button
-  Widget _buildLoginButton(BuildContext context) {
+  Widget _buildLoginButton(BuildContext context, Size size) {
+    final double width = size.width > 500 ? 400 : size.width * 0.8;
+    final double height = size.height * 0.07;
+
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to login screen
+        Navigator.pushNamed(context, '/cadastro');
       },
-      child: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 40),
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.25),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              offset: const Offset(0, 4),
+              blurRadius: 6,
             ),
-            child: const Center(
-              child: Text(
-                'Inicie a jornada',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Inicie a jornada',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: size.width > 500 ? 20 : size.width * 0.055,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-          Positioned(
-            right: 10,
-            top: 0,
-            bottom: 0,
-            child: Image.asset(
-              "lib/src/assets/images/right-arrow.png",
-              width: 50,
-              height: 50,
+            const SizedBox(width: 10),
+            Image.asset(
+              "assets/images/right-arrow.png",
+              width: size.width > 500 ? 24 : size.width * 0.08,
+              height: size.width > 500 ? 24 : size.width * 0.08,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  /// Login Text
-  Widget _buildLoginText() {
-    return const Padding(
-      padding: EdgeInsets.only(top: 20),
-      child: Text(
-        'Já tem uma conta? Entre',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-          decoration: TextDecoration.underline,
+  Widget _buildLoginText(BuildContext context, Size size) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, '/login');
+        },
+        child: Text(
+          'Já tem uma conta? Entre',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: size.width > 500 ? 16 : size.width * 0.045,
+            fontWeight: FontWeight.w500,
+            decoration: TextDecoration.underline,
+          ),
         ),
       ),
     );

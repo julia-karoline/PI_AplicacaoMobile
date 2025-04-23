@@ -1,6 +1,7 @@
-import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
-import 'package:app_ecojourney/src/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ecojourney/src/pages/login.dart';
+import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
+import 'package:app_ecojourney/src/services/api_service.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -14,8 +15,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController =
-      TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
   bool agreeToTerms = false;
 
   String? _validateNome(String? value) {
@@ -29,8 +29,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     if (value == null || value.isEmpty) {
       return 'O campo e-mail é obrigatório';
     }
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\$');
+    final emailRegex = RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
     if (!emailRegex.hasMatch(value)) {
       return 'Digite um e-mail válido';
     }
@@ -55,6 +54,37 @@ class _CadastroScreenState extends State<CadastroScreen> {
       return 'As senhas não coincidem';
     }
     return null;
+  }
+
+  Future<void> _cadastrarUsuario() async {
+    if (_formKey.currentState!.validate()) {
+      if (!agreeToTerms) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Você precisa aceitar os termos de uso")),
+        );
+        return;
+      }
+
+      final result = await ApiService.registerUser(
+        name: _nomeController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _senhaController.text,
+      );
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'])),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TelaLogin()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['error'] ?? 'Erro ao cadastrar usuário')),
+        );
+      }
+    }
   }
 
   @override
@@ -91,11 +121,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     const SizedBox(height: 40),
                     _buildTextField('Nome', _nomeController, _validateNome),
                     _buildTextField('Email', _emailController, _validateEmail),
-                    _buildTextField('Senha', _senhaController, _validateSenha,
-                        isPassword: true),
-                    _buildTextField('Repetir senha', _confirmarSenhaController,
-                        _validateConfirmarSenha,
-                        isPassword: true),
+                    _buildTextField('Senha', _senhaController, _validateSenha, isPassword: true),
+                    _buildTextField('Repetir senha', _confirmarSenhaController, _validateConfirmarSenha, isPassword: true),
                     Row(
                       children: [
                         Checkbox(
@@ -121,15 +148,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                           MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
-
-                          );
-                        }
-                      },
+                      onPressed: _cadastrarUsuario,
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),
                         child: Text(
@@ -143,7 +162,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => TelaLogin()),
+                          MaterialPageRoute(builder: (context) => const TelaLogin()),
                         );
                       },
                       child: const Text(
@@ -164,9 +183,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      String? Function(String?) validator,
-      {bool isPassword = false}) {
+  Widget _buildTextField(String label, TextEditingController controller, String? Function(String?) validator, {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -190,8 +207,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
             borderRadius: BorderRadius.circular(6),
             borderSide: const BorderSide(color: Colors.green),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         ),
         validator: validator,
       ),
