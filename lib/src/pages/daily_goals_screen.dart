@@ -175,7 +175,7 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
               });
               Navigator.pop(context);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF0E4932)),
+            style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(200, 50, 124, 96)),
             child: const Text("Adicionar"),
           ),
         ],

@@ -31,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
           label: "Shopping",
         ),
          BottomNavigationBarItem(
-          icon: Icon(Icons.task),
+          icon: Icon(Icons.book),
           label: "Hábitos",
         ),
       ],
