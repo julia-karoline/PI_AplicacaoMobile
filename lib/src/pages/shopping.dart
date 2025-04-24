@@ -25,12 +25,12 @@ class _RewardsScreenState extends State<RewardsScreen> {
     },
     {
       'title': 'Esportes',
-      'description': 'Desligar aparelhos da tomada quando não estiver usando',
+      'description': '20% off na compra de itens esportivos \n 18.000 pontos',
       'completed': false,
     },
     {
-      'title': 'Esportes',
-      'description': 'Desligar aparelhos da tomada quando não estiver usando',
+      'title': 'Moda e Acessórios',
+      'description': '15% off na compra de produtos de beleza\n 15.000 pontos',
       'completed': false,
     },
   ];
