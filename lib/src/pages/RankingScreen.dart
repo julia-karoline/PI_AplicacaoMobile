@@ -20,16 +20,17 @@ class _RankingScreenState extends State<RankingScreen> {
   void onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
-        break;
-      case 1:
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/shopping');
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, '/habitos');
-        break;
+      Navigator.pushReplacementNamed(context, '/home');
+      break;
+    case 1:
+      Navigator.pushReplacementNamed(context, '/ranking');
+      break;
+    case 2:
+      Navigator.pushReplacementNamed(context, '/shopping');
+      break;
+    case 3:
+      Navigator.pushReplacementNamed(context, '/habitos');
+      break;
     }
   }
 

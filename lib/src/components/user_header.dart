@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UserHeader extends StatelessWidget {
   final String userName;
-  final dynamic userPoints; // pode ser int ou double (toneladas de CO2)
+  final dynamic userPoints;
   final int daysUsingApp;
   final bool isCarbonInfo;
   final double? carbonReduction;

@@ -132,16 +132,9 @@ class TelaLoginState extends State<TelaLogin> {
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                key: const Key('login_button'), // Corrigido aqui
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DailyGoalsScreen()),
-                    );
-                  }
-                },
+                            ElevatedButton(
+                key: const Key('login_button'),
+                onPressed: login, 
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0E4932),
                   shape: RoundedRectangleBorder(
@@ -159,6 +152,7 @@ class TelaLoginState extends State<TelaLogin> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {

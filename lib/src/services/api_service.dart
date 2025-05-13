@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 class ApiService {
   static final String baseUrl = _getBaseUrl();
+  static String? _token;
 
   static String _getBaseUrl() {
     if (kIsWeb) {
@@ -15,6 +16,17 @@ class ApiService {
     } else {
       return 'http://localhost:4040/api';
     }
+  }
+
+    static void setToken(String token) {
+    _token = token;
+  }
+
+    static Map<String, String> _headers() {
+    return {
+      'Content-Type': 'application/json',
+      if (_token != null) 'Authorization': 'Bearer $_token',
+    };
   }
 
   static Future<Map<String, dynamic>> registerUser({
@@ -56,7 +68,7 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, dynamic>> loginUser({
+ static Future<Map<String, dynamic>> loginUser({
   required String email,
   required String password,
 }) async {
@@ -74,6 +86,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      setToken(data['token']); 
       return {
         'success': true,
         'token': data['token'],
@@ -82,11 +95,16 @@ class ApiService {
       };
     } else {
       final body = jsonDecode(response.body);
-      return {'success': false, 'error': body['error'] ?? 'Erro ao fazer login'};
+      return {
+        'success': false,
+        'error': body['error'] ?? 'Erro ao fazer login'
+      };
     }
   } catch (e) {
     return {'success': false, 'error': 'Erro de conexão: $e'};
   }
 }
-
 }
+
+
+

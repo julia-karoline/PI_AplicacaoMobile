@@ -1,7 +1,6 @@
 import 'package:app_ecojourney/src/components/rewards_card.dart';
 import 'package:flutter/material.dart';
 import '../components/user_header.dart';
-import '../components/daily_goal_card.dart';
 import '../components/bottom_nav_bar.dart';
 
 class RewardsScreen extends StatefulWidget {
@@ -130,63 +129,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
     );
   }
 
-  void _showAddGoalDialog() {
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Nova Meta"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: "Título"),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: "Descrição"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancelar"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newTitle = titleController.text.trim();
-                final newDescription = descriptionController.text.trim();
-
-                if (newTitle.isEmpty || newDescription.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Preencha todos os campos.")),
-                  );
-                  return;
-                }
-
-                setState(() {
-                  dailyGoals.add({
-                    'title': newTitle,
-                    'description': newDescription,
-                    'completed': false,
-                  });
-                });
-                Navigator.pop(context);
-              },
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: Color(0xFF0E4932)),
-              child: const Text("Adicionar"),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void toggleGoal(int index) {
     setState(() {
@@ -203,14 +145,17 @@ class _RewardsScreenState extends State<RewardsScreen> {
   void onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/ranking');
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/shopping');
-        break;
+      Navigator.pushReplacementNamed(context, '/home');
+      break;
+    case 1:
+      Navigator.pushReplacementNamed(context, '/ranking');
+      break;
+    case 2:
+      Navigator.pushReplacementNamed(context, '/shopping');
+      break;
+    case 3:
+      Navigator.pushReplacementNamed(context, '/habitos');
+      break;
     }
   }
 

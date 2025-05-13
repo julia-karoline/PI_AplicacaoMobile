@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/login.dart';
-import 'package:app_ecojourney/src/services/api_service.dart';
+import 'package:app_ecojourney/src/models/user.dart';
+import 'package:app_ecojourney/src/services/user_api_service.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -56,35 +57,37 @@ class _CadastroScreenState extends State<CadastroScreen> {
   }
 
   Future<void> _cadastrarUsuario() async {
-    if (_formKey.currentState!.validate()) {
-      if (!agreeToTerms) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Você precisa aceitar os termos de uso")),
-        );
-        return;
-      }
-
-      final result = await ApiService.registerUser(
-        name: _nomeController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _senhaController.text,
+  if (_formKey.currentState!.validate()) {
+    if (!agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Você precisa aceitar os termos de uso")),
       );
+      return;
+    }
 
-      if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'])),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TelaLogin()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['error'] ?? 'Erro ao cadastrar usuário')),
-        );
-      }
+    final novoUsuario = User(
+      name: _nomeController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _senhaController.text,
+    );
+
+    final result = await UserApiService.registerUser(novoUsuario);
+
+    if (result['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'])),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const TelaLogin()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['error'] ?? 'Erro ao cadastrar usuário')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

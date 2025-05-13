@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.app_ecojourney"
+    namespace "com.example.app_ecojourney"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

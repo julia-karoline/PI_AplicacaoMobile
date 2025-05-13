@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../components/user_header.dart';
 import '../components/daily_goal_card.dart';
 import '../components/bottom_nav_bar.dart';
+import 'package:app_ecojourney/src/pages/login.dart';
+import 'package:app_ecojourney/src/services/auth_api_service.dart';
 
 class DailyGoalsScreen extends StatefulWidget {
   const DailyGoalsScreen({super.key});
@@ -219,7 +221,23 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  appBar: AppBar(title: const Text("")),
+  appBar: AppBar(title: const Text(""),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.logout),
+      tooltip: "Sair",
+      onPressed: () async {
+        await AuthApiService.logout();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const TelaLogin()),
+          (route) => false,
+        );
+      },
+    ),
+  ],
+  ),
+  
   bottomNavigationBar: BottomNavBar(
     currentIndex: 0,
     onTap: onNavTap,
