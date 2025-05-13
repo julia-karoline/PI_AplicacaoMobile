@@ -10,11 +10,11 @@ class RankingScreen extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingScreen> {
   List<Map<String, dynamic>> ranking = [
-    {'name': 'Daniela', 'days': 25, 'points': 30000},
-    {'name': 'Carlos Henri...', 'days': 30, 'points': 27500},
-    {'name': 'Giovana Muniz', 'days': 10, 'points': 18750},
-    {'name': 'Julia Karoline', 'days': 5, 'points': 10000},
-    {'name': 'Thalison', 'days': 2, 'points': 4000},
+    {'name': '12/05/2025', 'days': 5, 'points': 30000},
+    {'name': '11/05/2025', 'days': 4, 'points': 27500},
+    {'name': '10/05/2025', 'days': 3, 'points': 18750},
+    {'name': '09/05/2025', 'days': 2, 'points': 10000},
+    {'name': '08/06/2025', 'days': 1, 'points': 4000},
   ];
 
   void onNavTap(int index) {
@@ -49,7 +49,7 @@ class _RankingScreenState extends State<RankingScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF0E4932), // Cor atualizada aqui
+                color: const Color(0xFF0E4932), // Cor atualizada 
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -82,7 +82,7 @@ class _RankingScreenState extends State<RankingScreen> {
                     children: const [
                       Icon(Icons.emoji_events, color: Colors.white, size: 24),
                       Text(
-                        '20º',
+                        '',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -123,7 +123,7 @@ class _RankingScreenState extends State<RankingScreen> {
                         ),
                       ),
                       title: Text(user['name']),
-                      subtitle: Text('${user['days']} dias'),
+                      subtitle: Text('${user['days']} dias ativos'),
                       trailing: Text(
                         '${user['points']}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
