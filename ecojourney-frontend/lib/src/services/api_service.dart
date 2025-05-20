@@ -1,7 +1,10 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'dart:io' show Platform;
+import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+
 
 
 class ApiService {
@@ -10,11 +13,11 @@ class ApiService {
 
   static String _getBaseUrl() {
     if (kIsWeb) {
-      return 'http://localhost:4040/api';
+      return 'http://192.168.7.140:4040/api';
     } else if (Platform.isAndroid) {
-      return 'http://10.0.2.2:4040/api';
+      return 'http://192.168.7.140:4040/api';
     } else {
-      return 'http://localhost:4040/api';
+      return 'http://192.168.7.140:4040/api';
     }
   }
 
@@ -104,7 +107,37 @@ class ApiService {
     return {'success': false, 'error': 'Erro de conexão: $e'};
   }
 }
+
+static Future<List<String>> fetchSuggestionsFromIA({
+  required List<String> habits,
+  required double carbonFootprint,
+}) async {
+  final token = await AuthApiService.getToken();
+  final url = Uri.parse('$baseUrl/suggestions');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'habits': habits,
+        'carbonFootprint': carbonFootprint,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return List<String>.from(data['suggestions']);
+    } else {
+      throw Exception('Erro ao obter sugestões');
+    }
+  } catch (e) {
+    print('Erro IA: $e');
+    rethrow;
+  }
 }
-
-
+}
 

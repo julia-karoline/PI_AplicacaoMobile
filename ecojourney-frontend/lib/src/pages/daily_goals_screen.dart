@@ -1,3 +1,4 @@
+import 'package:app_ecojourney/src/services/api_service.dart';
 import 'package:flutter/material.dart';
 import '../components/user_header.dart';
 import '../components/daily_goal_card.dart';
@@ -217,81 +218,109 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   }
 }
 
+void _mostrarSugestaoIA() async {
+  try {
+    final habits = dailyGoals.map((goal) => goal['title'].toString()).toList();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-  appBar: AppBar(title: const Text(""),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.logout),
-      tooltip: "Sair",
-      onPressed: () async {
-        await AuthApiService.logout();
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const TelaLogin()),
-          (route) => false,
-        );
-      },
+    final suggestions = await ApiService.fetchSuggestionsFromIA(
+      habits: habits,
+      carbonFootprint: 120.0, 
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sugestões da IA'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: suggestions
+              .map((s) => Text('• $s', style: const TextStyle(fontSize: 14)))
+              .toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro ao obter sugestão da IA')),
+    );
+  }
+}
+
+
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: const Text("")),
+    bottomNavigationBar: BottomNavBar(
+      currentIndex: 0,
+      onTap: onNavTap,
+    ),
+    
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    UserHeader(
+      userName: userName,
+      userPoints: userPoints,
+      daysUsingApp: daysUsingApp,
+    ),
+    const SizedBox(height: 20),
+    const Text(
+      "Metas diárias",
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 10),
+
+    TextButton.icon(
+      onPressed: _mostrarSugestaoIA,
+      icon: Icon(Icons.bolt, color: Colors.green),
+      label: const Text('Obter sugestão da IA'),
+    ),
+    const SizedBox(height: 10),
+
+    Expanded(
+      child: ListView(
+        children: [
+          ...dailyGoals.asMap().entries.map((entry) {
+            int index = entry.key;
+            final goal = entry.value;
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: DailyGoalCard(
+                key: ValueKey(goal['completed']),
+                title: goal['title'],
+                description: goal['description'],
+                isCompleted: goal['completed'],
+                onCheck: () => toggleGoal(index),
+                onEdit: () => editGoal(index),
+                onDelete: () => _confirmDelete(index),
+              ),
+            );
+          }),
+        ],
+      ),
     ),
   ],
-  ),
-  
-  bottomNavigationBar: BottomNavBar(
-    currentIndex: 0,
-    onTap: onNavTap,
-  ),
-  body: Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        UserHeader(
-          userName: userName,
-          userPoints: userPoints,
-          daysUsingApp: daysUsingApp,
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          "Metas diárias",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        Expanded(
-          child: ListView.builder(
-            itemCount: dailyGoals.length,
-            itemBuilder: (context, index) {
-              final goal = dailyGoals[index];
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: DailyGoalCard(
-                          key: ValueKey(goal['completed']),
-                          title: goal['title'],
-                          description: goal['description'],
-                          isCompleted: goal['completed'],
-                          onCheck: () => toggleGoal(index),
-                          onEdit: () => editGoal(index),
-                          onDelete: () => _confirmDelete(index),
-                        ),
-
-              );
-            },
-          ),
-        ),
-      ],
-    ),
-  ),
-  floatingActionButton: FloatingActionButton(
-  onPressed: _showAddGoalDialog,
-  backgroundColor: Color(0xFF0E4932),
-  child: const Icon(
-    Icons.add,
-    color: Colors.white,
-  ),
 ),
-
-);
-
-  }
+    ),
+    
+    floatingActionButton: FloatingActionButton(
+      onPressed: _showAddGoalDialog,
+      backgroundColor: const Color(0xFF0E4932),
+      child: const Icon(Icons.add, color: Colors.white),
+    ),
+    
+  );
+  
+}
 }
