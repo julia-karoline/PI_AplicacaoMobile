@@ -3,33 +3,25 @@ import 'package:flutter/material.dart';
 import '../components/user_header.dart';
 import '../components/daily_goal_card.dart';
 import '../components/bottom_nav_bar.dart';
-import 'package:app_ecojourney/src/pages/login.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 
 class DailyGoalsScreen extends StatefulWidget {
   const DailyGoalsScreen({super.key});
 
   @override
+  
   State<DailyGoalsScreen> createState() => _DailyGoalsScreenState();
+  
 }
 
 class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
-  String userName = "Lucas";
+  String userName = "Carregando...";
   int userPoints = 120;
   int daysUsingApp = 10;
 
-  List<Map<String, dynamic>> dailyGoals = [
-    {
-      'title': 'Reciclagem',
-      'description': 'Separar lixo reciclável e orgânico para coleta apropriada',
-      'completed': false,
-    },
-    {
-      'title': 'Economia de energia',
-      'description': 'Desligar aparelhos da tomada quando não estiver usando',
-      'completed': false,
-    },
-  ];
+  List<Map<String, dynamic>> dailyGoals = [];
+
+  
 
   void _confirmDelete(int index) {
   showDialog(
@@ -130,7 +122,7 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
 }
 
 
-  void _showAddGoalDialog() {
+  void _showAddGoalDialog() async {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
 
@@ -157,27 +149,41 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text("Cancelar"),
           ),
-          ElevatedButton(
-            onPressed: () {
-              final newTitle = titleController.text.trim();
-              final newDescription = descriptionController.text.trim();
+            ElevatedButton(
+              onPressed: () async {
+                final newTitle = titleController.text.trim();
+                final newDescription = descriptionController.text.trim();
 
-              if (newTitle.isEmpty || newDescription.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Preencha todos os campos.")),
-                );
-                return;
-              }
+                if (newTitle.isEmpty || newDescription.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Preencha todos os campos.")),
+                  );
+                  return;
+                }
 
-              setState(() {
-                dailyGoals.add({
-                  'title': newTitle,
-                  'description': newDescription,
-                  'completed': false,
-                });
-              });
-              Navigator.pop(context);
-            },
+                try {
+                  final novaMeta = await ApiService.createDailyGoal(
+                    title: newTitle,
+                    description: newDescription,
+                  );
+
+                  setState(() {
+                    dailyGoals.add({
+                      'id': novaMeta['id'],
+                      'title': newTitle,
+                      'description': newDescription,
+                      'completed': false,
+                    });
+                  });
+
+                  Navigator.pop(context);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao salvar meta: $e')),
+                  );
+                }
+              },
+
             style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(200, 50, 124, 96)),
             child: const Text("Adicionar"),
           ),
@@ -218,44 +224,79 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   }
 }
 
+
+
+
 void _mostrarSugestaoIA() async {
   try {
-    final habits = dailyGoals.map((goal) => goal['title'].toString()).toList();
-
-    final suggestions = await ApiService.fetchSuggestionsFromIA(
-      habits: habits,
-      carbonFootprint: 120.0, 
+    final sugestoes = await ApiService.fetchSuggestionsFromIA(
+      habits: dailyGoals.map((e) => e['title'].toString()).toList(),
+      carbonFootprint: 120.0,
     );
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sugestões da IA'),
+        title: Text('Sugestões da IA'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: suggestions
-              .map((s) => Text('• $s', style: const TextStyle(fontSize: 14)))
-              .toList(),
+          children: sugestoes.map((s) => Text("- $s")).toList(),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('OK'))
         ],
       ),
     );
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Erro ao obter sugestão da IA')),
+    print("Erro IA: $e");
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Erro'),
+        content: Text('Erro ao obter sugestões: $e'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Fechar'))
+        ],
+      ),
     );
   }
 }
 
 
 
+
 @override
+void initState() {
+  super.initState();
+  _carregarUsuario();
+  _carregarMetasDoBackend();
+}
+
+void _carregarUsuario() async {
+  final nome = await AuthApiService.getUserName();
+  setState(() {
+    userName = nome ?? 'Usuário';
+  });
+}
+void _carregarMetasDoBackend() async {
+  try {
+    final metas = await ApiService.fetchDailyGoals();
+    print("Metas recebidas do backend: $metas"); 
+    setState(() {
+      dailyGoals = metas.map((m) => {
+        'id': m['id'],
+        'title': m['title'],
+        'description': m['description'],
+        'completed': m['completed'] == true || m['completed'] == 1,
+      }).toList();
+    });
+  } catch (e) {
+    print('Erro ao carregar metas: $e');
+  }
+}
+
+
+
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(title: const Text("")),
@@ -281,11 +322,13 @@ Widget build(BuildContext context) {
     ),
     const SizedBox(height: 10),
 
-    TextButton.icon(
-      onPressed: _mostrarSugestaoIA,
-      icon: Icon(Icons.bolt, color: Colors.green),
-      label: const Text('Obter sugestão da IA'),
-    ),
+    ElevatedButton.icon(
+  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0E4932)),
+  onPressed: _mostrarSugestaoIA,
+  icon: Icon(Icons.bolt, color: Colors.white),
+  label: Text('Obter sugestão da IA', style: TextStyle(color: Colors.white)),
+),
+
     const SizedBox(height: 10),
 
     Expanded(
@@ -297,7 +340,7 @@ Widget build(BuildContext context) {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: DailyGoalCard(
-                key: ValueKey(goal['completed']),
+               key: ValueKey(goal['id'] ?? index),
                 title: goal['title'],
                 description: goal['description'],
                 isCompleted: goal['completed'],
