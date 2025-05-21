@@ -1,3 +1,4 @@
+import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/cadastro.dart';
 import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
@@ -38,28 +39,29 @@ class TelaLoginState extends State<TelaLogin> {
   }
 
   Future<void> login() async {
-    if (_formKey.currentState!.validate()) {
-      final result = await ApiService.loginUser(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+  if (_formKey.currentState!.validate()) {
+    final result = await AuthApiService.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+
+    if (result['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'])),
       );
 
-      if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'])),
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['error'] ?? 'Erro ao fazer login')),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['error'] ?? 'Erro ao fazer login')),
+      );
     }
   }
+}
+
 
  
   @override

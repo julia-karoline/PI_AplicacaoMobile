@@ -36,15 +36,22 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                dailyGoals.removeAt(index);
-              });
-              Navigator.pop(context);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Meta excluída com sucesso.')),
-              );
+            onPressed: () async {
+              try {
+                await ApiService.deleteDailyGoal(dailyGoals[index]['id']);
+                setState(() {
+                  dailyGoals.removeAt(index);
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Meta excluída com sucesso.')),
+                );
+              } catch (e) {
+                print('Erro ao excluir meta: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Erro ao excluir meta')),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Excluir'),
@@ -56,7 +63,8 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
 }
 
 
- void editGoal(int index) {
+
+void editGoal(int index) {
   final goal = dailyGoals[index];
   final titleController = TextEditingController(text: goal['title']);
   final descriptionController = TextEditingController(text: goal['description']);
@@ -83,19 +91,17 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _confirmDelete(index); 
+              _confirmDelete(index);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Excluir'),
           ),
-
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
           ),
-
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final updatedTitle = titleController.text.trim();
               final updatedDescription = descriptionController.text.trim();
 
@@ -106,12 +112,26 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
                 return;
               }
 
-              setState(() {
-                dailyGoals[index]['title'] = updatedTitle;
-                dailyGoals[index]['description'] = updatedDescription;
-              });
+              try {
+                await ApiService.updateDailyGoal(
+                  id: goal['id'],
+                  title: updatedTitle,
+                  description: updatedDescription,
+                  completed: goal['completed'],
+                );
 
-              Navigator.pop(context);
+                setState(() {
+                  dailyGoals[index]['title'] = updatedTitle;
+                  dailyGoals[index]['description'] = updatedDescription;
+                });
+
+                Navigator.pop(context);
+              } catch (e) {
+                print('Erro ao atualizar meta: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Erro ao atualizar meta")),
+                );
+              }
             },
             child: const Text('Salvar'),
           ),
