@@ -25,6 +25,7 @@ class ApiService {
     static void setToken(String token) {
     _token = token;
   }
+  
 
     static Map<String, String> _headers() {
     return {
@@ -239,6 +240,97 @@ static Future<void> deleteDailyGoal(int id) async {
   }
 }
 
+static Future<List<Map<String, dynamic>>> fetchHabits() async {
+  final token = await AuthApiService.getToken();
+  final url = Uri.parse('$baseUrl/habits');
 
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    if (token != null) 'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return List<Map<String, dynamic>>.from(data);
+  } else {
+    throw Exception('Erro ao buscar hábitos');
+  }
+}
+
+static Future<Map<String, dynamic>> createHabit({
+  required String title,
+  required String description,
+  required double value,
+  required String unit,
+}) async {
+  final token = await AuthApiService.getToken();
+  final url = Uri.parse('$baseUrl/habits');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode({
+      'title': title,
+      'description': description,
+      'value': value,
+      'unit': unit,
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Erro ao criar hábito: ${response.body}');
+  }
+}
+
+static Future<void> updateHabit({
+  required int id,
+  required String title,
+  required String description,
+  required double value,
+  required String unit,
+}) async {
+  final token = await AuthApiService.getToken();
+  final url = Uri.parse('$baseUrl/habits/$id');
+
+  final response = await http.put(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode({
+      'title': title,
+      'description': description,
+      'value': value,
+      'unit': unit,
+    }),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Erro ao atualizar hábito');
+  }
+}
+
+static Future<void> deleteHabit(int id) async {
+  final token = await AuthApiService.getToken();
+  final url = Uri.parse('$baseUrl/habits/$id');
+
+  final response = await http.delete(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Erro ao excluir hábito');
+  }
+}
 }
 

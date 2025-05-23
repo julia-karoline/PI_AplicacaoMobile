@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../components/bottom_nav_bar.dart';
 import '../components/user_header.dart';
+import 'package:app_ecojourney/src/services/api_service.dart';
+import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import '../components/habit_card.dart';
 
 class InfoScreen extends StatefulWidget {
@@ -13,23 +15,30 @@ class InfoScreen extends StatefulWidget {
 
 class _InfoScreenState extends State<InfoScreen> {
   String userName = "Lucas";
-  double userCarbonFootprint = 85.6;
-  double reductionPercentage = 12.4;
+  double userCarbonFootprint = 0.0;
+  double reductionPercentage = 0.0;
+  List<Map<String, dynamic>> habits = [];
+  bool isLoading = true;
 
-  List<Map<String, dynamic>> habits = [
-    {
-      'title': 'Consumo de Carne',
-      'description': 'Seu consumo mensal de carne',
-      'value': 5.0,
-      'unit': 'Kg',
-    },
-    {
-      'title': 'Gasto com Gasolina',
-      'description': 'Seu gasto semanal com gasolina',
-      'value': 22.5,
-      'unit': 'Litros',
-    },
-  ];
+   double calcularPegadaCarbono(List<Map<String, dynamic>> habits) {
+    double total = 0.0;
+
+    for (var habit in habits) {
+      final title = habit['title'].toString().toLowerCase();
+      final value = habit['value'] ?? 0.0;
+
+      if (title.contains('carne')) {
+        total += value * 27.0;
+      } else if (title.contains('gasolina')) {
+        total += value * 2.31;
+      } else if (title.contains('energia')) {
+        total += value * 0.5;
+      }
+    }
+
+    return total;
+  }
+
 
   void _editHabit(int index) {
   final habit = habits[index];
@@ -42,6 +51,121 @@ class _InfoScreenState extends State<InfoScreen> {
     context: context,
     builder: (context) => AlertDialog(
       title: const Text("Editar Hábito"),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(controller: titleController, decoration: const InputDecoration(labelText: "Título")),
+            TextField(controller: descriptionController, decoration: const InputDecoration(labelText: "Descrição")),
+            TextField(controller: valueController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Valor")),
+            TextField(controller: unitController, decoration: const InputDecoration(labelText: "Unidade")),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancelar")),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0E4932),
+        ), 
+          onPressed: () async {
+            final updatedTitle = titleController.text.trim();
+            final updatedDesc = descriptionController.text.trim();
+            final updatedUnit = unitController.text.trim();
+            final updatedValue = double.tryParse(valueController.text.trim());
+
+            if (updatedTitle.isEmpty || updatedDesc.isEmpty || updatedUnit.isEmpty || updatedValue == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Preencha todos os campos corretamente.")),
+              );
+              return;
+            }
+
+            try {
+              await ApiService.updateHabit(
+                id: habit['id'],
+                title: updatedTitle,
+                description: updatedDesc,
+                value: updatedValue,
+                unit: updatedUnit,
+              );
+
+              setState(() {
+              habits[index] = {
+                'id': habit['id'],
+                'title': updatedTitle,
+                'description': updatedDesc,
+                'value': updatedValue,
+                'unit': updatedUnit,
+              };
+
+              userCarbonFootprint = calcularPegadaCarbono(habits);
+            });
+
+
+              Navigator.pop(context);
+            } catch (e) {
+              print('Erro ao atualizar hábito: $e');
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Erro ao atualizar hábito")),
+              );
+            }
+          },
+          child: const Text("Salvar"),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+  void _confirmDeleteHabit(int index) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Excluir Hábito"),
+      content: const Text("Tem certeza que deseja excluir este hábito?"),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancelar")),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () async {
+            try {
+              final habitId = habits[index]['id'];
+              await ApiService.deleteHabit(habitId);
+
+
+              setState(() => habits.removeAt(index));
+              userCarbonFootprint = calcularPegadaCarbono(habits);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Hábito excluído com sucesso")),
+              );
+            } catch (e) {
+              print("Erro ao excluir hábito: $e");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Erro ao excluir hábito")),
+              );
+            }
+          },
+          child: const Text("Excluir"),
+        ),
+      ],
+    ),
+  );
+}
+
+
+  void _showAddHabitDialog() {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final valueController = TextEditingController();
+  final unitController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Novo Hábito"),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -66,140 +190,53 @@ class _InfoScreenState extends State<InfoScreen> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancelar"),
-        ),
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancelar")),
         ElevatedButton(
-          onPressed: () {
-            final updatedTitle = titleController.text.trim();
-            final updatedDesc = descriptionController.text.trim();
-            final updatedUnit = unitController.text.trim();
-            final updatedValue = double.tryParse(valueController.text.trim());
+          style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0E4932),
+        ),
+          onPressed: () async {
+            final title = titleController.text.trim();
+            final desc = descriptionController.text.trim();
+            final unit = unitController.text.trim();
+            final value = double.tryParse(valueController.text.trim());
 
-            if (updatedTitle.isEmpty || updatedDesc.isEmpty || updatedUnit.isEmpty || updatedValue == null) {
+            if (title.isEmpty || desc.isEmpty || unit.isEmpty || value == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Preencha todos os campos corretamente.")),
               );
               return;
             }
 
-            setState(() {
-              habits[index] = {
-                'title': updatedTitle,
-                'description': updatedDesc,
-                'value': updatedValue,
-                'unit': updatedUnit,
-              };
+            try {
+              final novoHabito = await ApiService.createHabit(
+                title: title,
+                description: desc,
+                value: value,
+                unit: unit,
+              );
+
+              setState(() {
+              habits.add(novoHabito);
+              userCarbonFootprint = calcularPegadaCarbono(habits); 
             });
 
-            Navigator.pop(context);
+
+              Navigator.pop(context);
+            } catch (e) {
+              print("Erro ao criar hábito: $e");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Erro ao criar hábito.")),
+              );
+            }
           },
-          child: const Text("Salvar"),
+          child: const Text("Adicionar"),
         ),
       ],
     ),
   );
 }
 
-
-  void _confirmDeleteHabit(int index) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Excluir Hábito"),
-        content: const Text("Tem certeza que deseja excluir este hábito?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              setState(() => habits.removeAt(index));
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Hábito excluído com sucesso")),
-              );
-            },
-            child: const Text("Excluir"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAddHabitDialog() {
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-    final valueController = TextEditingController();
-    final unitController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Novo Hábito"),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: "Título"),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: "Descrição"),
-              ),
-              TextField(
-                controller: valueController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Valor"),
-              ),
-              TextField(
-                controller: unitController,
-                decoration: const InputDecoration(labelText: "Unidade (ex: Kg, Litros)"),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final title = titleController.text.trim();
-              final desc = descriptionController.text.trim();
-              final unit = unitController.text.trim();
-              final value = double.tryParse(valueController.text.trim());
-
-              if (title.isEmpty || desc.isEmpty || unit.isEmpty || value == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Preencha todos os campos corretamente.")),
-                );
-                return;
-              }
-
-              setState(() {
-                habits.add({
-                  'title': title,
-                  'description': desc,
-                  'value': value,
-                  'unit': unit,
-                });
-              });
-
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(200, 50, 124, 96)),
-            child: const Text("Adicionar"),
-          ),
-        ],
-      ),
-    );
-  }
 
   void onNavTap(int index) {
     switch (index) {
@@ -217,6 +254,37 @@ class _InfoScreenState extends State<InfoScreen> {
         break;
     }
   }
+  
+      @override
+      void initState() {
+        super.initState();
+        _carregarHabitos();
+        _carregarUsuario();
+      }
+
+      void _carregarUsuario() async {
+              final nome = await AuthApiService.getUserName();
+              setState(() {
+                userName = nome ?? 'Usuário';
+              });
+            }
+        void _carregarHabitos() async {
+        try {
+          final data = await ApiService.fetchHabits();
+          final novaPegada = calcularPegadaCarbono(data);
+
+          setState(() {
+            habits = data;
+            userCarbonFootprint = novaPegada;
+            isLoading = false;
+          });
+        } catch (e) {
+          print('Erro ao carregar hábitos: $e');
+          setState(() => isLoading = false);
+        }
+      }
+
+
 
   @override
   Widget build(BuildContext context) {
