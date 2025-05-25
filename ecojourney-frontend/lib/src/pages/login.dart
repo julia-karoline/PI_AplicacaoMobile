@@ -2,7 +2,6 @@ import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/cadastro.dart';
 import 'package:app_ecojourney/src/pages/daily_goals_screen.dart';
-import 'package:app_ecojourney/src/services/api_service.dart';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({super.key});

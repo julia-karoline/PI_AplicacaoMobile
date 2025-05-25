@@ -22,6 +22,69 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   List<Map<String, dynamic>> dailyGoals = [];
 
   
+void _mostrarSugestaoIA(List<String> habitos, double pegada) async {
+  try {
+    final sugestoes = await ApiService.fetchSuggestionsFromIA(
+      habits: habitos,
+      carbonFootprint: pegada,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.bolt, color: Color(0xFF0E4932)),
+            SizedBox(width: 8),
+            Text('Sugestões da IA'),
+          ],
+        ),
+        content: SizedBox(
+          height: 200,
+          width: double.maxFinite,
+          child: ListView.separated(
+            itemCount: sugestoes.length,
+            separatorBuilder: (context, index) => Divider(color: Colors.grey[300]),
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Icon(Icons.check_circle_outline, color: Color(0xFF0E4932)),
+                title: Text(
+                  sugestoes[index],
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            icon: Icon(Icons.check, color: Color(0xFF0E4932)),
+            label: Text(
+              'OK',
+              style: TextStyle(color: Color(0xFF0E4932)),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  } catch (e) {
+    print("Erro IA: $e");
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Erro'),
+        content: Text('Erro ao obter sugestões: $e'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Fechar'))
+        ],
+      ),
+    );
+  }
+}
 
   void _confirmDelete(int index) {
   showDialog(
@@ -247,40 +310,57 @@ void editGoal(int index) {
 
 
 
-void _mostrarSugestaoIA() async {
-  try {
-    final sugestoes = await ApiService.fetchSuggestionsFromIA(
-      habits: dailyGoals.map((e) => e['title'].toString()).toList(),
-      carbonFootprint: 120.0,
-    );
+void _mostrarFormularioIA() {
+  final habitosController = TextEditingController();
+  final pegadaController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Sugestões da IA'),
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Obter sugestões da IA'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: sugestoes.map((s) => Text("- $s")).toList(),
+          children: [
+            TextField(
+              controller: habitosController,
+              decoration: InputDecoration(labelText: 'Descreva seus hábitos'),
+            ),
+            TextField(
+              controller: pegadaController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'Pegada de carbono estimada (kg CO₂)'),
+            ),
+          ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('OK'))
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
+          ElevatedButton(
+            onPressed: () async {
+              final habitosTexto = habitosController.text.trim();
+              final pegadaTexto = pegadaController.text.trim();
+              if (habitosTexto.isEmpty || pegadaTexto.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Preencha todos os campos')),
+                );
+                return;
+              }
+
+              final pegada = double.tryParse(pegadaTexto) ?? 120.0;
+              final habitos = habitosTexto.split(',').map((e) => e.trim()).toList();
+
+              Navigator.pop(context); // fecha o diálogo atual
+
+              _mostrarSugestaoIA(habitos, pegada);
+            },
+            child: Text('Gerar sugestões'),
+          ),
         ],
-      ),
-    );
-  } catch (e) {
-    print("Erro IA: $e");
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Erro'),
-        content: Text('Erro ao obter sugestões: $e'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Fechar'))
-        ],
-      ),
-    );
-  }
+      );
+    },
+  );
 }
+
 
 
 
@@ -317,7 +397,8 @@ void _carregarMetasDoBackend() async {
 
 
 
-Widget build(BuildContext context) {
+@override
+  Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(title: const Text("")),
     bottomNavigationBar: BottomNavBar(
@@ -344,9 +425,9 @@ Widget build(BuildContext context) {
 
     ElevatedButton.icon(
   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0E4932)),
-  onPressed: _mostrarSugestaoIA,
-  icon: Icon(Icons.bolt, color: Colors.white),
-  label: Text('Obter sugestão da IA', style: TextStyle(color: Colors.white)),
+  onPressed: _mostrarFormularioIA, // Chama o formulário para inserir hábitos e pegada
+  icon: const Icon(Icons.bolt, color: Colors.white),
+  label: const Text('Obter sugestão da IA', style: TextStyle(color: Colors.white)),
 ),
 
     const SizedBox(height: 10),
