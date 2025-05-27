@@ -49,5 +49,27 @@ void main() {
       expect(
           find.text('Você precisa aceitar os termos de uso'), findsOneWidget);
     });
+
+    testWidgets(
+        'Mostra erro se a senha não contém letra maiúscula e caractere especial',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: CadastroScreen()));
+
+      await tester.enterText(find.byKey(const Key('nome_field')), 'Carlos');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'carlos@email.com');
+      await tester.enterText(
+          find.byKey(const Key('senha_field')), 'senha123'); // inválida
+      await tester.enterText(
+          find.byKey(const Key('confirmar_senha_field')), 'senha123');
+      await tester.tap(find.byKey(const Key('cadastrar_button')));
+      await tester.pump();
+
+      expect(
+        find.text(
+            'A senha deve conter pelo menos uma letra maiúscula e um caractere especial'),
+        findsOneWidget,
+      );
+    });
   });
 }

@@ -14,8 +14,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController =
-      TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
   bool agreeToTerms = false;
 
   String? _validateNome(String? value) {
@@ -44,6 +43,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
     if (value.length < 6) {
       return 'A senha deve ter pelo menos 6 caracteres';
     }
+
+    final senhaSegura = RegExp(r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$');
+    if (!senhaSegura.hasMatch(value)) {
+      return 'A senha deve conter pelo menos uma letra maiúscula e um caractere especial';
+    }
+
     return null;
   }
 
@@ -61,8 +66,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     if (_formKey.currentState!.validate()) {
       if (!agreeToTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Você precisa aceitar os termos de uso")),
+          const SnackBar(content: Text("Você precisa aceitar os termos de uso")),
         );
         return;
       }
@@ -83,8 +87,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(result['error'] ?? 'Erro ao cadastrar usuário')),
+          SnackBar(content: Text(result['error'] ?? 'Erro ao cadastrar usuário')),
         );
       }
     }
