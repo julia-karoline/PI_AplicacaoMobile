@@ -60,4 +60,24 @@ class AuthApiService {
     await prefs.remove('auth_token');
     await prefs.remove('user_name');
   }
+
+  static Future<int?> getUserPoints() async {
+   final token = await AuthApiService.getToken();
+
+  final response = await http.get(
+    Uri.parse('$baseUrl/user/points'),
+    headers: {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return data['points'] as int?;
+  } else {
+    print('Erro ao buscar pontos: ${response.body}');
+    return null;
+  }
+}
 }

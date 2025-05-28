@@ -1,0 +1,1 @@
+C:\EcoJourney\PI_AplicacaoMobile\ecojourney-frontend\build\app\intermediates\cxx\Debug\850443y1\obj\arm64-v8a

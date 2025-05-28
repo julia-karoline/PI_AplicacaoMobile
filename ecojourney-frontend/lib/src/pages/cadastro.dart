@@ -93,6 +93,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -251,4 +252,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
       ),
     );
   }
+      @override
+    void dispose() {
+      _nomeController.dispose();
+      _emailController.dispose();
+      _senhaController.dispose();
+      _confirmarSenhaController.dispose();
+      super.dispose();
+    }
 }

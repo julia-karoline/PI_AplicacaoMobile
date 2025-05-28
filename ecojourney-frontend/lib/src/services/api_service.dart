@@ -14,11 +14,11 @@ class ApiService {
 
   static String _getBaseUrl() {
     if (kIsWeb) {
-      return 'http://192.168.7.141:4040/api';
+      return 'http://192.168.56.1:4040/api';
     } else if (Platform.isAndroid) {
-      return 'http://192.168.7.141:4040/api';
+      return 'http://192.168.56.1:4040/api';
     } else {
-      return 'http://192.168.7.141:4040/api';
+      return 'http://192.168.56.1:4040/api';
     }
   }
 
@@ -332,5 +332,8 @@ static Future<void> deleteHabit(int id) async {
     throw Exception('Erro ao excluir hábito');
   }
 }
+
+
+
 }
 

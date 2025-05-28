@@ -15,6 +15,13 @@ class TelaLoginState extends State<TelaLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'O campo e-mail é obrigatório';
@@ -38,41 +45,86 @@ class TelaLoginState extends State<TelaLogin> {
   }
 
   Future<void> login() async {
-  if (_formKey.currentState!.validate()) {
-    final result = await AuthApiService.login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-
-    if (result['success']) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'])),
+    if (_formKey.currentState!.validate()) {
+      final result = await AuthApiService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['error'] ?? 'Erro ao fazer login')),
-      );
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'])),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['error'] ?? 'Email ou senha incorretos'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
-}
 
+  void showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recuperar senha'),
+        content: const Text('Função de recuperação ainda não implementada.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
 
- 
+  Widget _buildEmailField() {
+    return TextFormField(
+      key: const Key('email_field'),
+      controller: _emailController,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      validator: validateEmail,
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      key: const Key('password_field'),
+      controller: _passwordController,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: 'Senha',
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      validator: validatePassword,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE0FEEA),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 60),
@@ -87,40 +139,13 @@ class TelaLoginState extends State<TelaLogin> {
                 ),
               ),
               const SizedBox(height: 40),
-              TextFormField(
-                key: const Key('email_field'),
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                validator: validateEmail,
-              ),
+              _buildEmailField(),
               const SizedBox(height: 20),
-              TextFormField(
-                key: const Key('password_field'),
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                validator: validatePassword,
-              ),
+              _buildPasswordField(),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    
-                  },
+                  onPressed: showForgotPasswordDialog,
                   child: const Text(
                     'Esqueci minha senha',
                     style: TextStyle(
@@ -133,9 +158,9 @@ class TelaLoginState extends State<TelaLogin> {
                 ),
               ),
               const SizedBox(height: 20),
-                            ElevatedButton(
+              ElevatedButton(
                 key: const Key('login_button'),
-                onPressed: login, 
+                onPressed: login,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0E4932),
                   shape: RoundedRectangleBorder(
@@ -153,13 +178,12 @@ class TelaLoginState extends State<TelaLogin> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CadastroScreen()),
+                    MaterialPageRoute(builder: (context) => const CadastroScreen()),
                   );
                 },
                 child: const Text(

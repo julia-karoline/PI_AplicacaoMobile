@@ -1,0 +1,2 @@
+C:/EcoJourney/PI_AplicacaoMobile/ecojourney-frontend/android/app/.cxx/Debug/850443y1/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/EcoJourney/PI_AplicacaoMobile/ecojourney-frontend/android/app/.cxx/Debug/850443y1/armeabi-v7a/CMakeFiles/rebuild_cache.dir
