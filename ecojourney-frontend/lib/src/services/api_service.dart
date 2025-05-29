@@ -14,11 +14,11 @@ class ApiService {
 
   static String _getBaseUrl() {
     if (kIsWeb) {
-      return 'http://192.168.56.1:4040/api';
+      return 'http://192.168.7.140:4040/api';
     } else if (Platform.isAndroid) {
-      return 'http://192.168.56.1:4040/api';
+      return 'http://192.168.7.140:4040/api';
     } else {
-      return 'http://192.168.56.1:4040/api';
+      return 'http://192.168.7.140:4040/api';
     }
   }
 
