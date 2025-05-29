@@ -1,7 +1,8 @@
 import 'package:app_ecojourney/src/components/user_header.dart';
+import 'package:app_ecojourney/src/components/bottom_nav_bar.dart';
+import 'package:app_ecojourney/src/components/ranking_card.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
-import '../components/bottom_nav_bar.dart';
 
 class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});
@@ -12,8 +13,8 @@ class RankingScreen extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingScreen> {
   String userName = "Carregando...";
+  int userPoints = 0;
   bool isLoading = true;
-
   List<Map<String, dynamic>> ranking = [];
 
   @override
@@ -25,13 +26,15 @@ class _RankingScreenState extends State<RankingScreen> {
 
   void _carregarUsuario() async {
     final nome = await AuthApiService.getUserName();
+    final pontos = await AuthApiService.getUserPoints();
     setState(() {
       userName = nome ?? 'Usuário';
+      userPoints = pontos ?? 0;
     });
   }
 
   void _carregarRanking() async {
-    await Future.delayed(Duration(seconds: 1)); 
+    await Future.delayed(const Duration(seconds: 1)); // Simulação de carregamento
 
     final dados = [
       {'name': '12/05/2025', 'days': 5, 'points': 30000},
@@ -67,87 +70,79 @@ class _RankingScreenState extends State<RankingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("")),
+      appBar: AppBar(
+        title: const Text("Seu Ranking"),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF0E4932),
+        foregroundColor: Colors.white,
+      ),
       bottomNavigationBar: BottomNavBar(currentIndex: 1, onTap: onNavTap),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0E4932),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.eco, color: Colors.green, size: 40),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        UserHeader(userName: userName, daysUsingApp: 0, userPoints: 0,),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Pontos: 18.750',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.emoji_events, color: Colors.white),
-                ],
-              ),
-            ),
+            _buildHeader(),
             const SizedBox(height: 20),
             const Text(
               'Ranking',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Expanded(
-                    child: ranking.isEmpty
-                        ? const Center(child: Text("Nenhum dado disponível"))
-                        : ListView.builder(
-                            itemCount: ranking.length,
-                            itemBuilder: (context, index) {
-                              final user = ranking[index];
-                              return Card(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: ListTile(
-                                  leading: Text(
-                                    '${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF0E4932),
-                                    ),
-                                  ),
-                                  title: Text(user['name']),
-                                  subtitle: Text('${user['days']} dias ativos'),
-                                  trailing: Text(
-                                    '${user['points']} pts',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  ),
+            Expanded(
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ranking.isEmpty
+                      ? const Center(child: Text("Nenhum dado disponível"))
+                      : ListView.builder(
+                          itemCount: ranking.length,
+                          itemBuilder: (context, index) {
+                            final item = ranking[index];
+                            return RankingCard(
+                              position: index + 1,
+                              date: item['name'],
+                              days: item['days'],
+                              points: item['points'],
+                            );
+                          },
+                        ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E4932),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.eco, color: Colors.green, size: 40),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                UserHeader(userName: userName, userPoints: userPoints, daysUsingApp: 0),
+                const SizedBox(height: 4),
+                Text(
+                  'Pontos: $userPoints',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.emoji_events, color: Colors.white),
+        ],
       ),
     );
   }

@@ -5,84 +5,69 @@ class RewardsCard extends StatelessWidget {
   final String description;
   final bool isCompleted;
   final VoidCallback onCheck;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete; 
 
   const RewardsCard({
-  super.key,
-  required this.title,
-  required this.description,
-  required this.isCompleted,
-  required this.onCheck,
-  this.onEdit,
-  this.onDelete,
-});
-
+    super.key,
+    required this.title,
+    required this.description,
+    required this.isCompleted,
+    required this.onCheck,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(
-        
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 3,
-      color: Color(0xFFC5E5D9), 
-
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            IconButton(
-              icon: Icon(
-                isCompleted ? Icons.check_box : Icons.radio_button_unchecked,
-                color: isCompleted ? Colors.green : Colors.black,
-              ),
-              onPressed: onCheck,
-            ),
-
-            const SizedBox(width: 8),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Opacity(
+      opacity: isCompleted ? 0.6 : 1.0,
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 3,
+        color: isCompleted ? Colors.grey[200] : Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  Icon(Icons.card_giftcard, color: Color(0xFF0E4932), size: 28),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  if (isCompleted)
+                    const Icon(Icons.check_circle, color: Colors.green)
                 ],
               ),
-            ),
-          if (onEdit != null || onDelete != null)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (onDelete != null)
-                  IconButton(
-                    icon: const Icon(Icons.arrow_circle_right_rounded),
-                    tooltip: "Excluir meta",
-                    color: const Color.fromARGB(255, 0, 128, 0),
-                    onPressed: onDelete,
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton.icon(
+                  onPressed: isCompleted ? null : onCheck,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0E4932),
+                    disabledBackgroundColor: Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-              ],
-            ),     
-          ],
+                  icon: Icon(isCompleted ? Icons.lock : Icons.redeem, size: 18),
+                  label: Text(isCompleted ? "Resgatado" : "Resgatar"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -23,38 +23,65 @@ class HabitCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 3,
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(description,
-                      style: const TextStyle(fontSize: 14, color: Colors.black54)),
-                ],
+            // Título
+            Row(
+              children: [
+                const Icon(Icons.eco, color: Color(0xFF0E4932)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0E4932),
+                    ),
+                  ),
+                ),
+                Text(
+                  "$value $unit",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            // Descrição
+            Text(
+              description,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
               ),
             ),
-            Text("$value $unit",
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+
+            const SizedBox(height: 12),
+
+            // Ações
             if (onEdit != null || onDelete != null)
               Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (onEdit != null)
                     IconButton(
-                      icon: const Icon(Icons.edit),
+                      icon: const Icon(Icons.edit, color: Colors.blueGrey),
                       tooltip: "Editar",
                       onPressed: onEdit,
                     ),
                   if (onDelete != null)
                     IconButton(
-                      icon: const Icon(Icons.delete),
-                      color: Colors.red,
+                      icon: const Icon(Icons.delete, color: Colors.red),
                       tooltip: "Excluir",
                       onPressed: onDelete,
                     ),
