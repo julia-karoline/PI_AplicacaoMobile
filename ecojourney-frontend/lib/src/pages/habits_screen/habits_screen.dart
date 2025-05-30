@@ -1,5 +1,5 @@
-import 'package:app_ecojourney/src/pages/habits_screen.dart/habit_delete_dialog.dart';
-import 'package:app_ecojourney/src/pages/habits_screen.dart/habit_form_dialog.dart';
+import 'package:app_ecojourney/src/pages/habits_screen/habit_delete_dialog.dart';
+import 'package:app_ecojourney/src/pages/habits_screen/habit_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/components/bottom_nav_bar.dart';
 import 'package:app_ecojourney/src/components/user_header.dart';
@@ -8,14 +8,14 @@ import 'package:app_ecojourney/src/services/api_service.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:app_ecojourney/src/utils/carbon_utils.dart';
 
-class InfoScreen extends StatefulWidget {
-  const InfoScreen({super.key});
+class HabitsScreen extends StatefulWidget {
+  const HabitsScreen({super.key});
 
   @override
-  State<InfoScreen> createState() => _HabitsScreen();
+  State<HabitsScreen> createState() => _HabitsScreen();
 }
 
-class _HabitsScreen extends State<InfoScreen> {
+class _HabitsScreen extends State<HabitsScreen> {
   String userName = 'Carregando...';
   List<Map<String, dynamic>> habits = [];
   double userCarbonFootprint = 0.0;

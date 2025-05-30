@@ -25,7 +25,6 @@ class RankingCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(Icons.emoji_events, color: color),
         title: Text(date),
         subtitle: Text('$days dias ativos'),
         trailing: Text(

@@ -16,16 +16,17 @@ class InitialActionButtons extends StatelessWidget {
           onTap: () {
             Navigator.pushNamed(context, '/cadastro');
           },
+          
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 40),
             height: height,
             width: width,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 205, 248, 223).withOpacity(0.6),
+              color: const Color(0xFFC0DBD4),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Color.fromARGB(255, 75, 139, 122),
                   offset: const Offset(0, 4),
                   blurRadius: 6,
                 ),
@@ -37,7 +38,7 @@ class InitialActionButtons extends StatelessWidget {
                 Text(
                   'Criar conta',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Color(0xFF0E4932),
                     fontSize: size.width > 500 ? 20 : size.width * 0.055,
                     fontWeight: FontWeight.w600,
                   ),
@@ -45,6 +46,7 @@ class InitialActionButtons extends StatelessWidget {
                 const SizedBox(width: 10),
                 Image.asset(
                   "assets/images/right-arrow.png",
+                  color: Color(0xFF0E4932),
                   width: size.width > 500 ? 24 : size.width * 0.08,
                   height: size.width > 500 ? 24 : size.width * 0.08,
                 ),
@@ -61,7 +63,7 @@ class InitialActionButtons extends StatelessWidget {
             'Já tem uma conta? Entre',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF0E4932),
               fontSize: size.width > 500 ? 16 : size.width * 0.045,
               fontWeight: FontWeight.w500,
               decoration: TextDecoration.underline,

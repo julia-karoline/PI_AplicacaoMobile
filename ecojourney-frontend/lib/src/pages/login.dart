@@ -1,3 +1,4 @@
+import 'package:app_ecojourney/src/pages/habits_screen/habits_screen.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/cadastro.dart';
@@ -58,7 +59,7 @@ class TelaLoginState extends State<TelaLogin> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DailyGoalsScreen()),
+          MaterialPageRoute(builder: (context) => const HabitsScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -204,3 +205,4 @@ class TelaLoginState extends State<TelaLogin> {
     );
   }
 }
+

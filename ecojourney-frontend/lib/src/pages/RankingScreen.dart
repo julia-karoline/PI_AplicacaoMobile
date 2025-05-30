@@ -113,37 +113,11 @@ class _RankingScreenState extends State<RankingScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0E4932),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.eco, color: Colors.green, size: 40),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UserHeader(userName: userName, userPoints: userPoints, daysUsingApp: 0),
-                const SizedBox(height: 4),
-                Text(
-                  'Pontos: $userPoints',
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.emoji_events, color: Colors.white),
-        ],
-      ),
-    );
+      Widget _buildHeader() {
+        return UserHeader(
+      userName: userName,
+      userPoints: 18750, 
+      daysUsingApp: 0,
+      );
   }
 }

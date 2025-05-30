@@ -1,4 +1,4 @@
-import 'package:app_ecojourney/src/pages/habits_screen.dart/habits_screen.dart';
+import 'package:app_ecojourney/src/pages/habits_screen/habits_screen.dart';
 import 'package:app_ecojourney/src/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/pages/RankingScreen.dart';
@@ -23,7 +23,7 @@ class AppEcojourney extends StatelessWidget {
         '/home': (context) => const DailyGoalsScreen(),
         '/ranking': (context) => const RankingScreen(),
         '/shopping': (context) => const RewardsScreen(),
-        '/habitos': (context) => const InfoScreen(),
+        '/habitos': (context) => const HabitsScreen(),
       },
     );
   }

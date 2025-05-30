@@ -135,20 +135,49 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
 
   }
 
-  void _openIaFormDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => IaFormDialog(
-        onConfirm: (habits, footprint) async {
-          final suggestions = await ApiService.fetchSuggestionsFromIA(
-            habits: habits,
-            carbonFootprint: footprint,
-          );
-          showIaSuggestionsDialog(context: context, suggestions: suggestions);
-        },
-      ),
-    );
-  }
+void _openIaFormDialog() {
+  showDialog(
+    context: context,
+    builder: (_) => IaFormDialog(
+      onConfirm: (habits, footprint) async {
+        final suggestions = await ApiService.fetchSuggestionsFromIA(
+          habits: habits,
+          carbonFootprint: footprint,
+        );
+
+        showIaSuggestionsDialog(
+          context: context,
+          suggestions: suggestions,
+          onSuggestionSelected: (selected) async {
+            try {
+              final novaMeta = await ApiService.createDailyGoal(
+                title: selected,
+                description: 'Meta sugerida pela IA',
+              );
+              setState(() {
+                dailyGoals.add({
+                  'id': novaMeta['id'],
+                  'title': selected,
+                  'description': 'Meta sugerida pela IA',
+                  'completed': false,
+                });
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Meta "${selected}" criada com sucesso!')),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Erro ao criar meta.')),
+              );
+            }
+          },
+        );
+      },
+    ),
+  );
+}
+
 
   void _onNavTap(int index) {
     switch (index) {
