@@ -16,7 +16,7 @@ Criar uma interface amigável e acessível para:
 
 ---
 
-## 📱 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Flutter** (SDK multiplataforma)
 - **Dart** (linguagem principal)
