@@ -34,7 +34,7 @@ class _RankingScreenState extends State<RankingScreen> {
   }
 
   void _carregarRanking() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simulação de carregamento
+    await Future.delayed(const Duration(seconds: 1)); 
 
     final dados = [
       {'name': '12/05/2025', 'days': 5, 'points': 30000},
@@ -53,7 +53,7 @@ class _RankingScreenState extends State<RankingScreen> {
   void onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/habitos');
         break;
       case 1:
         Navigator.pushReplacementNamed(context, '/ranking');
@@ -62,7 +62,7 @@ class _RankingScreenState extends State<RankingScreen> {
         Navigator.pushReplacementNamed(context, '/shopping');
         break;
       case 3:
-        Navigator.pushReplacementNamed(context, '/habitos');
+        Navigator.pushReplacementNamed(context, '/home');
         break;
     }
   }

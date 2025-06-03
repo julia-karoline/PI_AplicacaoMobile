@@ -47,6 +47,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
   }
 
   void _loadUserData() async {
+    await Future.delayed(const Duration(seconds: 1));
     final name = await AuthApiService.getUserName();
     final points = await AuthApiService.getUserPoints();
 
@@ -61,16 +62,31 @@ class _RewardsScreenState extends State<RewardsScreen> {
   final pontosNecessarios = cupom['pointsRequired'] as int;
 
   if (userPoints >= pontosNecessarios) {
-    setState(() {
-      userPoints -= pontosNecessarios;
-      coupons[index]['redeemed'] = true;
-    });
+    final success = await AuthApiService.redeemPoints(pontosNecessarios);
 
-    await showRewardConfirmationDialog(
-      context: context,
-      title: cupom['title'],
-      discountCode: 'ECO10OFF-${index + 1}0',
-    );
+    if (success) {
+      setState(() {
+        coupons[index]['redeemed'] = true;
+      });
+
+      final updatedPoints = await AuthApiService.getUserPoints();
+      setState(() {
+        userPoints = updatedPoints ?? userPoints;
+      });
+
+      await showRewardConfirmationDialog(
+        context: context,
+        title: cupom['title'],
+        discountCode: 'ECO10OFF-${index + 1}0',
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao resgatar o cupom. Tente novamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -82,10 +98,11 @@ class _RewardsScreenState extends State<RewardsScreen> {
 }
 
 
+
   void _onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/habitos');
         break;
       case 1:
         Navigator.pushReplacementNamed(context, '/ranking');
@@ -94,7 +111,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
         Navigator.pushReplacementNamed(context, '/shopping');
         break;
       case 3:
-        Navigator.pushReplacementNamed(context, '/habitos');
+        Navigator.pushReplacementNamed(context, '/home');
         break;
     }
   }

@@ -116,7 +116,7 @@ class _HabitsScreen extends State<HabitsScreen> {
   void _onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/habitos');
         break;
       case 1:
         Navigator.pushReplacementNamed(context, '/ranking');
@@ -125,7 +125,7 @@ class _HabitsScreen extends State<HabitsScreen> {
         Navigator.pushReplacementNamed(context, '/shopping');
         break;
       case 3:
-        Navigator.pushReplacementNamed(context, '/habitos');
+        Navigator.pushReplacementNamed(context, '/home');
         break;
     }
   }
@@ -134,7 +134,7 @@ class _HabitsScreen extends State<HabitsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("")),
-      bottomNavigationBar: BottomNavBar(currentIndex: 3, onTap: _onNavTap),
+      bottomNavigationBar: BottomNavBar(currentIndex: 0, onTap: _onNavTap),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addOrEditHabit(),
         backgroundColor: const Color(0xFF0E4932),
@@ -170,7 +170,7 @@ class _HabitsScreen extends State<HabitsScreen> {
                               return HabitCard(
                                 title: habit['title'],
                                 description: habit['description'],
-                                value: habit['value'],
+                                value: (habit['value'] as num).toDouble(),
                                 unit: habit['unit'],
                                 onEdit: () => _addOrEditHabit(index: index),
                                 onDelete: () => _deleteHabit(index),

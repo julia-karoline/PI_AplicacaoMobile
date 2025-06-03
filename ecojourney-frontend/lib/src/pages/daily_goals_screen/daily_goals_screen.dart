@@ -39,6 +39,7 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   }
 
   Future<void> _loadDailyGoals() async {
+    await Future.delayed(const Duration(seconds: 1));
     try {
       final metas = await ApiService.fetchDailyGoals();
       setState(() {
@@ -54,12 +55,18 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     }
   }
 
-  void _toggleGoal(int index) {
-    setState(() {
-      dailyGoals[index]['completed'] = !dailyGoals[index]['completed'];
-      if (dailyGoals[index]['completed']) userPoints += 10;
-    });
+ void _toggleGoal(int index) async {
+  final completed = !dailyGoals[index]['completed'];
+  setState(() {
+    dailyGoals[index]['completed'] = completed;
+  });
+
+  if (completed) {
+    await AuthApiService.addPoints(10);
+    _loadUserInfo(); // Atualiza pontuação
   }
+}
+
 
   void _addOrEditGoal([int? index]) async {
   final goal = index != null ? dailyGoals[index] : null;
@@ -164,7 +171,7 @@ void _openIaFormDialog() {
               });
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Meta "${selected}" criada com sucesso!')),
+                SnackBar(content: Text('Meta "$selected" criada com sucesso!')),
               );
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -182,7 +189,7 @@ void _openIaFormDialog() {
   void _onNavTap(int index) {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/habitos');
         break;
       case 1:
         Navigator.pushReplacementNamed(context, '/ranking');
@@ -191,7 +198,7 @@ void _openIaFormDialog() {
         Navigator.pushReplacementNamed(context, '/shopping');
         break;
       case 3:
-        Navigator.pushReplacementNamed(context, '/habitos');
+        Navigator.pushReplacementNamed(context, '/home');
         break;
     }
   }
@@ -201,7 +208,7 @@ void _openIaFormDialog() {
     return Scaffold(
       appBar: AppBar(title: const Text("")),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 0,
+        currentIndex: 3,
         onTap: _onNavTap,
       ),
       floatingActionButton: FloatingActionButton(

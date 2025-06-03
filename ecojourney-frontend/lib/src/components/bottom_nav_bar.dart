@@ -19,8 +19,8 @@ class BottomNavBar extends StatelessWidget {
       unselectedItemColor: Colors.grey,
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.book),
-          label: "Metas",
+          icon: Icon(Icons.home),
+          label: "Hábitos",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.emoji_events),
@@ -31,8 +31,8 @@ class BottomNavBar extends StatelessWidget {
           label: "Shopping",
         ),
          BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Hábitos",
+          icon: Icon(Icons.book),
+          label: "Metas",
         ),
       ],
     );
