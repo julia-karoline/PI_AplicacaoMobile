@@ -35,17 +35,20 @@ class AuthApiService {
     }
   }
 
-  static Future<void> addPoints(int value) async {
-    final token = await getToken();
-    await http.post(
-      Uri.parse('$baseUrl/user/add-points'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'points': value}),
-    );
-  }
+static Future<bool> addPoints(int value) async {
+  final token = await getToken();
+  final response = await http.post(
+    Uri.parse('$baseUrl/user/add-points'),
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({'points': value}),
+  );
+
+  return response.statusCode == 200;
+}
+
 
   static Future<bool> redeemPoints(int points) async {
     try {

@@ -14,11 +14,11 @@ class ApiService {
 
   static String _getBaseUrl() {
     if (kIsWeb) {
-      return 'http://192.168.7.140:4040/api';
+      return 'http://192.168.15.6:4040/api';
     } else if (Platform.isAndroid) {
-      return 'http://192.168.7.140:4040/api';
+      return 'http://192.168.15.6:4040/api';
     } else {
-      return 'http://192.168.7.140:4040/api';
+      return 'http://192.168.15.6:4040/api';
     }
   }
 
@@ -196,20 +196,19 @@ static Future<Map<String, dynamic>> createDailyGoal({
   }
 }
 
-static Future<void> updateDailyGoal({
+static Future<bool> updateDailyGoal({
   required int id,
   required String title,
   required String description,
   required bool completed,
 }) async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/daily-goals/$id');
 
   final response = await http.put(
-    url,
+    Uri.parse('http://192.168.15.6:4040/api/daily-goals/$id'),
     headers: {
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
     },
     body: jsonEncode({
       'title': title,
@@ -218,10 +217,9 @@ static Future<void> updateDailyGoal({
     }),
   );
 
-  if (response.statusCode != 200) {
-    throw Exception('Erro ao atualizar meta: ${response.body}');
-  }
+  return response.statusCode == 200;
 }
+
 
 static Future<void> deleteDailyGoal(int id) async {
   final token = await AuthApiService.getToken();

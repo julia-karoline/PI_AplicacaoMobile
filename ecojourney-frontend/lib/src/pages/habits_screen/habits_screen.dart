@@ -1,3 +1,4 @@
+import 'package:app_ecojourney/src/components/user_provider.dart';
 import 'package:app_ecojourney/src/pages/habits_screen/habit_delete_dialog.dart';
 import 'package:app_ecojourney/src/pages/habits_screen/habit_form_dialog.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ import 'package:app_ecojourney/src/components/habit_card.dart';
 import 'package:app_ecojourney/src/services/api_service.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:app_ecojourney/src/utils/carbon_utils.dart';
+import 'package:provider/provider.dart';
+
+
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -16,7 +20,6 @@ class HabitsScreen extends StatefulWidget {
 }
 
 class _HabitsScreen extends State<HabitsScreen> {
-  String userName = 'Carregando...';
   List<Map<String, dynamic>> habits = [];
   double userCarbonFootprint = 0.0;
   bool isLoading = true;
@@ -24,16 +27,11 @@ class _HabitsScreen extends State<HabitsScreen> {
   @override
   void initState() {
     super.initState();
-    _carregarUsuario();
+
     _carregarHabitos();
   }
 
-  Future<void> _carregarUsuario() async {
-    final nome = await AuthApiService.getUserName();
-    setState(() {
-      userName = nome ?? 'Usuário';
-    });
-  }
+
 
   Future<void> _carregarHabitos() async {
     try {
@@ -132,6 +130,8 @@ class _HabitsScreen extends State<HabitsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text("")),
       bottomNavigationBar: BottomNavBar(currentIndex: 0, onTap: _onNavTap),
@@ -148,10 +148,11 @@ class _HabitsScreen extends State<HabitsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   UserHeader(
-                    userName: userName,
-                    userPoints: userCarbonFootprint.toInt(),
-                    daysUsingApp: 0,
+                    userName: userProvider.name,
+                    userPoints: userProvider.points,
+                    daysUsingApp: userProvider.daysUsingApp,
                   ),
+
                   const SizedBox(height: 16),
                   _buildCarbonSummary(context),
                   const SizedBox(height: 20),

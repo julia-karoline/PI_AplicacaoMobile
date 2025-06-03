@@ -1,3 +1,4 @@
+import 'package:app_ecojourney/src/components/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ecojourney/src/components/user_header.dart';
 import 'package:app_ecojourney/src/components/bottom_nav_bar.dart';
@@ -8,6 +9,7 @@ import 'package:app_ecojourney/src/pages/daily_goals_screen/daily_goal_form_dial
 import 'package:app_ecojourney/src/pages/daily_goals_screen/delete_confirmation_dialog.dart';
 import 'package:app_ecojourney/src/pages/daily_goals_screen/ia_form_dialog.dart';
 import 'package:app_ecojourney/src/pages/daily_goals_screen/ia_suggestions_dialog.dart';
+import 'package:provider/provider.dart';
 
 class DailyGoalsScreen extends StatefulWidget {
   const DailyGoalsScreen({super.key});
@@ -18,7 +20,7 @@ class DailyGoalsScreen extends StatefulWidget {
 
 class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
   String userName = "Carregando...";
-  int userPoints = 0;
+  double userPoints = 0;
   int daysUsingApp = 10;
   List<Map<String, dynamic>> dailyGoals = [];
 
@@ -29,14 +31,25 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     _loadDailyGoals();
   }
 
-  Future<void> _loadUserInfo() async {
-    final name = await AuthApiService.getUserName();
-    final points = await AuthApiService.getUserPoints();
-    setState(() {
-      userName = name ?? 'Usuário';
-      userPoints = points ?? 0;
-    });
-  }
+Future<void> _loadUserInfo() async {
+  final name = await AuthApiService.getUserName();
+  final points = await AuthApiService.getUserPoints();
+
+  if (!mounted) return; 
+
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  userProvider.updateUser(
+    name: name ?? 'Usuário',
+    points: points?.toDouble() ?? 0.0,
+  );
+
+
+  setState(() {
+    userName = name ?? 'Usuário';
+  });
+}
+
+
 
   Future<void> _loadDailyGoals() async {
     await Future.delayed(const Duration(seconds: 1));
@@ -55,17 +68,42 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     }
   }
 
- void _toggleGoal(int index) async {
-  final completed = !dailyGoals[index]['completed'];
-  setState(() {
-    dailyGoals[index]['completed'] = completed;
-  });
+void _toggleGoal(int index) async {
+  final goal = dailyGoals[index];
+  final completed = !goal['completed'];
 
-  if (completed) {
-    await AuthApiService.addPoints(10);
-    _loadUserInfo(); // Atualiza pontuação
+  final success = await ApiService.updateDailyGoal(
+    id: goal['id'],
+    title: goal['title'],
+    description: goal['description'],
+    completed: completed,
+  );
+
+  if (success) {
+    if (completed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Meta concluída! +10 pontos 🎉'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      await Future.delayed(const Duration(seconds: 2)); 
+
+      await ApiService.deleteDailyGoal(goal['id']);
+      await _loadUserInfo(); 
+    }
+
+    _loadDailyGoals();
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro ao atualizar a meta')),
+    );
   }
 }
+
+
 
 
   void _addOrEditGoal([int? index]) async {
@@ -205,6 +243,8 @@ void _openIaFormDialog() {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text("")),
       bottomNavigationBar: BottomNavBar(
@@ -223,7 +263,7 @@ void _openIaFormDialog() {
           children: [
             UserHeader(
               userName: userName,
-              userPoints: userPoints,
+              userPoints: userProvider.points,
               daysUsingApp: daysUsingApp,
             ),
             const SizedBox(height: 20),

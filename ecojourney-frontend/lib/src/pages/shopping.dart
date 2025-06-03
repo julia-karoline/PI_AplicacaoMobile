@@ -1,11 +1,11 @@
-// ... imports
-
 import 'package:app_ecojourney/src/components/bottom_nav_bar.dart';
 import 'package:app_ecojourney/src/components/reward_confirmation_dialog.dart';
 import 'package:app_ecojourney/src/components/rewards_card.dart';
 import 'package:app_ecojourney/src/components/user_header.dart';
+import 'package:app_ecojourney/src/components/user_provider.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RewardsScreen extends StatefulWidget {
   const RewardsScreen({super.key});
@@ -16,26 +16,27 @@ class RewardsScreen extends StatefulWidget {
 
 class _RewardsScreenState extends State<RewardsScreen> {
   String userName = "Carregando...";
-  int userPoints = 0;
+  double userPoints = 0;
+  
   int daysUsingApp = 10;
 
   final List<Map<String, dynamic>> coupons = [
     {
       'title': 'Cosméticos',
       'description': '10% off em produtos de beleza - 20.000 pontos',
-      'pointsRequired': 20000,
+      'pointsRequired': 10,
       'redeemed': false,
     },
     {
       'title': 'Esportes',
       'description': '20% off em itens esportivos - 18.000 pontos',
-      'pointsRequired': 18000,
+      'pointsRequired': 18,
       'redeemed': false,
     },
     {
       'title': 'Moda e Acessórios',
       'description': '15% off em moda - 15.000 pontos',
-      'pointsRequired': 15000,
+      'pointsRequired': 15,
       'redeemed': false,
     },
   ];
@@ -43,19 +44,27 @@ class _RewardsScreenState extends State<RewardsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUserInfo();
   }
 
-  void _loadUserData() async {
-    await Future.delayed(const Duration(seconds: 1));
-    final name = await AuthApiService.getUserName();
-    final points = await AuthApiService.getUserPoints();
+Future<void> _loadUserInfo() async {
+  final name = await AuthApiService.getUserName();
+  final points = await AuthApiService.getUserPoints();
 
-    setState(() {
-      userName = name ?? 'Usuário';
-      userPoints = points ?? 0;
-    });
-  }
+  if (!mounted) return; 
+
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  userProvider.updateUser(
+    name: name ?? 'Usuário',
+    points: points?.toDouble() ?? 0.0,
+  );
+
+
+  setState(() {
+    userName = name ?? 'Usuário';
+  });
+}
+
 
  void _redeemCoupon(int index) async {
   final cupom = coupons[index];
