@@ -1,8 +1,10 @@
 import 'package:app_ecojourney/src/components/user_header.dart';
 import 'package:app_ecojourney/src/components/bottom_nav_bar.dart';
 import 'package:app_ecojourney/src/components/ranking_card.dart';
+import 'package:app_ecojourney/src/components/user_provider.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});
@@ -13,25 +15,36 @@ class RankingScreen extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingScreen> {
   String userName = "Carregando...";
-  int userPoints = 0;
+  double userPoints = 0;
+  int daysUsingApp = 10;
   bool isLoading = true;
   List<Map<String, dynamic>> ranking = [];
 
   @override
   void initState() {
     super.initState();
-    _carregarUsuario();
+    _loadUserInfo();
     _carregarRanking();
   }
 
-  void _carregarUsuario() async {
-    final nome = await AuthApiService.getUserName();
-    final pontos = await AuthApiService.getUserPoints();
-    setState(() {
-      userName = nome ?? 'Usuário';
-      userPoints = pontos ?? 0;
-    });
-  }
+
+Future<void> _loadUserInfo() async {
+  final name = await AuthApiService.getUserName();
+  final points = await AuthApiService.getUserPoints();
+
+  if (!mounted) return; 
+
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  userProvider.updateUser(
+    name: name ?? 'Usuário',
+    points: points?.toDouble() ?? 0.0,
+  );
+
+
+  setState(() {
+    userName = name ?? 'Usuário';
+  });
+}
 
   void _carregarRanking() async {
     await Future.delayed(const Duration(seconds: 1)); 
@@ -69,6 +82,8 @@ class _RankingScreenState extends State<RankingScreen> {
 
   @override
   Widget build(BuildContext context) {
+        final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Seu Ranking"),
@@ -82,7 +97,11 @@ class _RankingScreenState extends State<RankingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+            UserHeader(
+              userName: userName,
+              userPoints: userProvider.points,
+              daysUsingApp: daysUsingApp,
+            ),
             const SizedBox(height: 20),
             const Text(
               'Ranking',

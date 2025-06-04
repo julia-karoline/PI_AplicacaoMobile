@@ -35,7 +35,7 @@ class AuthApiService {
     }
   }
 
-static Future<bool> addPoints(int value) async {
+static Future<bool> addPoints(double value) async {
   final token = await getToken();
   final response = await http.post(
     Uri.parse('$baseUrl/user/add-points'),
@@ -50,24 +50,30 @@ static Future<bool> addPoints(int value) async {
 }
 
 
-  static Future<bool> redeemPoints(int points) async {
-    try {
-      final token = await getToken();
-      final response = await http.post(
-        Uri.parse('$baseUrl/redeem-points'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'points': points}),
-      );
+static Future<bool> redeemPoints(int points) async {
+  try {
+    final token = await getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/redeem-points'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'points': points}),
+    );
 
-      return response.statusCode == 200;
-    } catch (e) {
-      print('Erro ao resgatar pontos: $e');
-      return false;
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return !(body['error'] != null); 
     }
+
+    return false;
+  } catch (e) {
+    print('Erro ao resgatar pontos: $e');
+    return false;
   }
+}
+
 
   static Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();

@@ -6,6 +6,7 @@ import 'package:app_ecojourney/src/components/user_provider.dart';
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RewardsScreen extends StatefulWidget {
   const RewardsScreen({super.key});
@@ -23,19 +24,19 @@ class _RewardsScreenState extends State<RewardsScreen> {
   final List<Map<String, dynamic>> coupons = [
     {
       'title': 'Cosméticos',
-      'description': '10% off em produtos de beleza - 20.000 pontos',
-      'pointsRequired': 10,
+      'description': '10% off em produtos de beleza - 20 pontos',
+      'pointsRequired': 20,
       'redeemed': false,
     },
     {
       'title': 'Esportes',
-      'description': '20% off em itens esportivos - 18.000 pontos',
+      'description': '5% off em itens esportivos - 18 pontos',
       'pointsRequired': 18,
       'redeemed': false,
     },
     {
       'title': 'Moda e Acessórios',
-      'description': '15% off em moda - 15.000 pontos',
+      'description': '15% off em moda - 15 pontos',
       'pointsRequired': 15,
       'redeemed': false,
     },
@@ -45,6 +46,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
   void initState() {
     super.initState();
     _loadUserInfo();
+    _loadRedeemedCoupons();
   }
 
 Future<void> _loadUserInfo() async {
@@ -64,24 +66,38 @@ Future<void> _loadUserInfo() async {
     userName = name ?? 'Usuário';
   });
 }
-
+Future<void> _saveRedeemedCoupons() async {
+  final prefs = await SharedPreferences.getInstance();
+  final redeemedTitles = coupons
+      .where((c) => c['redeemed'] == true)
+      .map((c) => c['title'].toString())
+      .toList();
+  await prefs.setStringList('redeemedCoupons', redeemedTitles);
+}
 
  void _redeemCoupon(int index) async {
   final cupom = coupons[index];
-  final pontosNecessarios = cupom['pointsRequired'] as int;
+  final pontosNecessarios = (cupom['pointsRequired'] as num).toInt();
 
-  if (userPoints >= pontosNecessarios) {
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+  if (userProvider.points >= pontosNecessarios) {
     final success = await AuthApiService.redeemPoints(pontosNecessarios);
 
     if (success) {
       setState(() {
         coupons[index]['redeemed'] = true;
-      });
+        
 
-      final updatedPoints = await AuthApiService.getUserPoints();
-      setState(() {
-        userPoints = updatedPoints ?? userPoints;
       });
+    await _saveRedeemedCoupons();
+      final updatedPoints = await AuthApiService.getUserPoints();
+      if (updatedPoints != null) {
+        userProvider.updateUser(
+          name: userProvider.name,
+          points: updatedPoints.toDouble(),
+        );
+      }
 
       await showRewardConfirmationDialog(
         context: context,
@@ -89,21 +105,32 @@ Future<void> _loadUserInfo() async {
         discountCode: 'ECO10OFF-${index + 1}0',
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao resgatar o cupom. Tente novamente.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showSnackBar('Erro ao resgatar o cupom. Tente novamente.');
     }
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Você precisa de mais pontos para resgatar este cupom.'),
-        backgroundColor: Colors.red,
-      ),
-    );
+    _showSnackBar('Você precisa de mais pontos para resgatar este cupom.');
   }
+}
+
+
+Future<void> _loadRedeemedCoupons() async {
+  final prefs = await SharedPreferences.getInstance();
+  final redeemed = prefs.getStringList('redeemedCoupons') ?? [];
+
+  setState(() {
+    for (var c in coupons) {
+      c['redeemed'] = redeemed.contains(c['title']);
+    }
+  });
+}
+
+void _showSnackBar(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ),
+  );
 }
 
 
@@ -127,6 +154,8 @@ Future<void> _loadUserInfo() async {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text("")),
       bottomNavigationBar: BottomNavBar(currentIndex: 2, onTap: _onNavTap),
@@ -135,10 +164,11 @@ Future<void> _loadUserInfo() async {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            
             UserHeader(
-              userName: userName,
-              userPoints: userPoints,
-              daysUsingApp: daysUsingApp,
+              userName: userProvider.name,
+              userPoints: userProvider.points,
+              daysUsingApp: userProvider.daysUsingApp,
             ),
             const SizedBox(height: 20),
             const Text(

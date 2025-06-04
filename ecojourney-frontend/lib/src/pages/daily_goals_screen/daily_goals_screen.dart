@@ -72,12 +72,18 @@ void _toggleGoal(int index) async {
   final goal = dailyGoals[index];
   final completed = !goal['completed'];
 
-  final success = await ApiService.updateDailyGoal(
-    id: goal['id'],
-    title: goal['title'],
-    description: goal['description'],
-    completed: completed,
-  );
+final maxLength = 100;
+final truncatedTitle = goal['title'].toString().length > maxLength
+    ? goal['title'].toString().substring(0, maxLength)
+    : goal['title'].toString();
+
+final success = await ApiService.updateDailyGoal(
+  id: goal['id'],
+  title: truncatedTitle,
+  description: goal['description'],
+  completed: completed,
+);
+
 
   if (success) {
     if (completed) {
@@ -195,10 +201,22 @@ void _openIaFormDialog() {
           suggestions: suggestions,
           onSuggestionSelected: (selected) async {
             try {
-              final novaMeta = await ApiService.createDailyGoal(
-                title: selected,
-                description: 'Meta sugerida pela IA',
-              );
+                final maxLength = 100; 
+                final truncatedTitle = selected.length > maxLength
+                    ? selected.substring(0, maxLength)
+                    : selected;
+
+                final novaMeta = await ApiService.createDailyGoal(
+                  title: truncatedTitle,
+                  description: 'Meta sugerida pela IA',
+                );
+                if (selected.length > maxLength) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('O título da sugestão foi encurtado para se adequar ao sistema.'),
+                  ),
+                );
+              }
               setState(() {
                 dailyGoals.add({
                   'id': novaMeta['id'],

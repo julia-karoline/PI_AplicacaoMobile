@@ -23,6 +23,7 @@ class _HabitsScreen extends State<HabitsScreen> {
   List<Map<String, dynamic>> habits = [];
   double userCarbonFootprint = 0.0;
   bool isLoading = true;
+   int daysUsingApp = 10;
 
   @override
   void initState() {

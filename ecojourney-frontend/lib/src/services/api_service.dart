@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:app_ecojourney/src/services/auth_api_service.dart';
+import 'package:app_ecojourney/src/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; 
@@ -14,11 +15,11 @@ class ApiService {
 
   static String _getBaseUrl() {
     if (kIsWeb) {
-      return 'http://192.168.15.6:4040/api';
+      return '${Constants.baseUrl}';
     } else if (Platform.isAndroid) {
-      return 'http://192.168.15.6:4040/api';
+      return '${Constants.baseUrl}';
     } else {
-      return 'http://192.168.15.6:4040/api';
+      return '${Constants.baseUrl}';
     }
   }
 
@@ -39,7 +40,7 @@ class ApiService {
     required String email,
     required String password,
   }) async {
-    final url = Uri.parse('$baseUrl/register');
+    final url = Uri.parse('${Constants.baseUrl}/register');
 
     try {
       final response = await http.post(
@@ -76,7 +77,7 @@ static Future<Map<String, dynamic>> loginUser({
   required String email,
   required String password,
 }) async {
-  final url = Uri.parse('$baseUrl/login');
+  final url = Uri.parse('${Constants.baseUrl}/login');
 
   try {
     final response = await http.post(
@@ -118,7 +119,7 @@ static Future<List<String>> fetchSuggestionsFromIA({
 }) async {
   final token = await AuthApiService.getToken();
 
- final url = Uri.parse('$baseUrl/suggestions');
+ final url = Uri.parse('${Constants.baseUrl}/suggestions');
 
   try {
     final response = await http.post(
@@ -148,7 +149,7 @@ static Future<List<Map<String, dynamic>>> fetchDailyGoals() async {
   final token = await AuthApiService.getToken();
   print('Token enviado para o backend: $token'); 
 
-  final url = Uri.parse('$baseUrl/daily-goals');
+  final url = Uri.parse('${Constants.baseUrl}/daily-goals');
 
   final response = await http.get(url, headers: {
     'Content-Type': 'application/json',
@@ -170,7 +171,7 @@ static Future<Map<String, dynamic>> createDailyGoal({
   required String description,
 }) async {
    final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/daily-goals');
+  final url = Uri.parse('${Constants.baseUrl}/daily-goals');
 
   try {
     final response = await http.post(
@@ -205,7 +206,7 @@ static Future<bool> updateDailyGoal({
   final token = await AuthApiService.getToken();
 
   final response = await http.put(
-    Uri.parse('http://192.168.15.6:4040/api/daily-goals/$id'),
+    Uri.parse('${Constants.baseUrl}/daily-goals/$id'),
     headers: {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
@@ -223,7 +224,7 @@ static Future<bool> updateDailyGoal({
 
 static Future<void> deleteDailyGoal(int id) async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/daily-goals/$id');
+  final url = Uri.parse('${Constants.baseUrl}/daily-goals/$id');
 
   final response = await http.delete(
     url,
@@ -240,7 +241,7 @@ static Future<void> deleteDailyGoal(int id) async {
 
 static Future<List<Map<String, dynamic>>> fetchHabits() async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/habits');
+  final url = Uri.parse('${Constants.baseUrl}/habits');
 
   final response = await http.get(url, headers: {
     'Content-Type': 'application/json',
@@ -262,7 +263,7 @@ static Future<Map<String, dynamic>> createHabit({
   required String unit,
 }) async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/habits');
+  final url = Uri.parse('${Constants.baseUrl}/habits');
 
   final response = await http.post(
     url,
@@ -293,7 +294,7 @@ static Future<void> updateHabit({
   required String unit,
 }) async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/habits/$id');
+  final url = Uri.parse('${Constants.baseUrl}/habits/$id');
 
   final response = await http.put(
     url,
@@ -316,7 +317,7 @@ static Future<void> updateHabit({
 
 static Future<void> deleteHabit(int id) async {
   final token = await AuthApiService.getToken();
-  final url = Uri.parse('$baseUrl/habits/$id');
+  final url = Uri.parse('${Constants.baseUrl}/habits/$id');
 
   final response = await http.delete(
     url,
@@ -330,8 +331,6 @@ static Future<void> deleteHabit(int id) async {
     throw Exception('Erro ao excluir hábito');
   }
 }
-
-
 
 }
 

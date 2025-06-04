@@ -54,17 +54,20 @@ class RewardsCard extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton.icon(
-                  onPressed: isCompleted ? null : onCheck,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0E4932),
-                    disabledBackgroundColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                onPressed: isCompleted ? null : onCheck,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0E4932), 
+                  foregroundColor: Colors.white, 
+                  disabledBackgroundColor: Colors.grey,
+                  disabledForegroundColor: Colors.white70, 
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  icon: Icon(isCompleted ? Icons.lock : Icons.redeem, size: 18),
-                  label: Text(isCompleted ? "Resgatado" : "Resgatar"),
                 ),
+                icon: Icon(isCompleted ? Icons.lock : Icons.redeem, size: 18),
+                label: Text(isCompleted ? "Resgatado" : "Resgatar"),
+              ),
+
               ),
             ],
           ),
